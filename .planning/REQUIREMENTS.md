@@ -93,37 +93,37 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | TBD | Pending |
-| AUTH-02 | TBD | Pending |
-| AUTH-03 | TBD | Pending |
-| AUTH-04 | TBD | Pending |
-| DATA-01 | TBD | Pending |
-| DATA-02 | TBD | Pending |
-| PUB-01 | TBD | Pending |
-| PUB-02 | TBD | Pending |
-| PUB-03 | TBD | Pending |
-| PUB-04 | TBD | Pending |
-| PUB-05 | TBD | Pending |
-| PAYR-01 | TBD | Pending |
-| PAYR-02 | TBD | Pending |
-| PAYR-03 | TBD | Pending |
-| PAYR-04 | TBD | Pending |
-| PMT-01 | TBD | Pending |
-| PMT-02 | TBD | Pending |
-| PMT-03 | TBD | Pending |
-| PMT-04 | TBD | Pending |
-| EMP-01 | TBD | Pending |
-| EMP-02 | TBD | Pending |
-| EMP-03 | TBD | Pending |
-| UI-01 | TBD | Pending |
-| UI-02 | TBD | Pending |
-| UI-03 | TBD | Pending |
+| AUTH-01 | Phase 1 | Pending |
+| AUTH-02 | Phase 1 | Pending |
+| AUTH-03 | Phase 4 | Pending |
+| AUTH-04 | Phase 1 | Pending |
+| DATA-01 | Phase 1 | Pending |
+| DATA-02 | Phase 1 | Pending |
+| PUB-01 | Phase 3 | Pending |
+| PUB-02 | Phase 3 | Pending |
+| PUB-03 | Phase 3 | Pending |
+| PUB-04 | Phase 3 | Pending |
+| PUB-05 | Phase 3 | Pending |
+| PAYR-01 | Phase 2 | Pending |
+| PAYR-02 | Phase 2 | Pending |
+| PAYR-03 | Phase 2 | Pending |
+| PAYR-04 | Phase 2 | Pending |
+| PMT-01 | Phase 3 | Pending |
+| PMT-02 | Phase 3 | Pending |
+| PMT-03 | Phase 3 | Pending |
+| PMT-04 | Phase 3 | Pending |
+| EMP-01 | Phase 4 | Pending |
+| EMP-02 | Phase 4 | Pending |
+| EMP-03 | Phase 4 | Pending |
+| UI-01 | Phase 1 | Pending |
+| UI-02 | Phase 5 | Pending |
+| UI-03 | Phase 5 | Pending |
 
 **Coverage:**
 - v1 requirements: 25 total
-- Mapped to phases: 0
-- Unmapped: 25
+- Mapped to phases: 25
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-05-10*
-*Last updated: 2026-05-10 after initial definition*
+*Last updated: 2026-05-10 after roadmap creation*
