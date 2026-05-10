@@ -4,6 +4,7 @@ import {
   AlertCircle,
   BarChart3,
   Bell,
+  Building2,
   CheckCircle2,
   ClipboardList,
   ChevronDown,

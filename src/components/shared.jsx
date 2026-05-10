@@ -20,6 +20,33 @@ import { serviceMeta } from '../data.js';
 import { serviceIcons } from '../config.js';
 import { getServiceName } from '../utils.js';
 
+export class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
+
+  render() {
+    if (this.state.error) {
+      return (
+        <main className="static-page">
+          <section className="static-panel">
+            <span className="section-kicker">Ошибка интерфейса</span>
+            <h1>Раздел временно не загрузился</h1>
+            <p>{this.state.error.message}</p>
+          </section>
+        </main>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 export function ServiceBadge({ service }) {
   const Icon = serviceIcons[service] ?? ReceiptText;
 

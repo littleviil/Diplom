@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   CreditCard,
   FileText,
+  LayoutDashboard,
   Pencil,
   QrCode,
   ReceiptText,
@@ -15,7 +16,7 @@ import {
   UserRound,
   WalletCards,
 } from 'lucide-react';
-import { formatMoney, getServiceName } from '../utils.js';
+import { buildReceiptSummary, formatMoney, getServiceName } from '../utils.js';
 import { PageTitle, ServiceBadge, StatCard, StatusBadge, WorkspaceTopbar } from '../components/shared.jsx';
 
 export function PayerLayout({ user, store, logout, updateProfile, payReceipt, theme, setTheme }) {

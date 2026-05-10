@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { SESSION_KEY, STORE_KEY, THEME_KEY } from './config.js';
 import { AuthPage, HomePage, InfoPage, PartnerPage, PrivacyPage } from './pages/PublicPages.jsx';
-import { RequireRole, SettingsPage } from './components/shared.jsx';
+import { ErrorBoundary, RequireRole, SettingsPage } from './components/shared.jsx';
 import { PayerDashboard, PayerLayout, PaymentPage, ProfilePage, ReceiptDetailPage, ReceiptsPage } from './features/payer.jsx';
 import { EmployeeDashboard, EmployeeLayout } from './features/employee.jsx';
 import { CompanyAdminDashboard, CompanyAdminLayout, CompanyEmployeesPage, CompanyObjectsPage, CompanyRegistryPage, CompanyStatisticsPage } from './features/companyAdmin.jsx';
@@ -216,6 +216,7 @@ export default function App() {
   };
 
   return (
+    <ErrorBoundary>
     <Routes>
       <Route path="/" element={<HomePage store={store} user={currentUser} onLogout={logout} />} />
       <Route path="/about" element={<InfoPage user={currentUser} onLogout={logout} />} />
@@ -310,5 +311,6 @@ export default function App() {
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </ErrorBoundary>
   );
 }

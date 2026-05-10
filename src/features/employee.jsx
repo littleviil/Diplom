@@ -12,6 +12,7 @@ import {
   Settings,
 } from 'lucide-react';
 import {
+  buildReceiptSummary,
   formatMoney,
   getLastYearPeriodOptions,
   getReceiptPeriodKey,

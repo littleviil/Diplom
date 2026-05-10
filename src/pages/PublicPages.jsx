@@ -14,6 +14,7 @@ import {
   QrCode,
   ReceiptText,
   ShieldCheck,
+  UserRound,
   WalletCards,
 } from 'lucide-react';
 import {

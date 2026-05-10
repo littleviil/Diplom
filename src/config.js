@@ -1,4 +1,15 @@
-import { Building2, Droplets, Flame, Home, Zap } from 'lucide-react';
+import {
+  BarChart3,
+  Building2,
+  Droplets,
+  Flame,
+  Gauge,
+  Home,
+  ReceiptText,
+  ShieldCheck,
+  WalletCards,
+  Zap,
+} from 'lucide-react';
 
 export const STORE_KEY = 'zhku-demo-store';
 
