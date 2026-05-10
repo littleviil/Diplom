@@ -9,29 +9,44 @@ import {
   useNavigate,
   useOutletContext,
   useParams,
+  useSearchParams,
 } from 'react-router-dom';
 import {
   AlertCircle,
   BadgeCheck,
   Banknote,
   BarChart3,
+  Bell,
   Building2,
+  ChevronDown,
   CheckCircle2,
+  ClipboardList,
   CreditCard,
+  Database,
+  Download,
   Droplets,
+  FileSpreadsheet,
   FileText,
   Flame,
   Gauge,
   Home,
+  House,
   Landmark,
   LayoutDashboard,
   LogIn,
   LogOut,
+  MessageSquare,
+  Moon,
   Pencil,
   QrCode,
   ReceiptText,
+  Settings,
   ShieldCheck,
+  Sun,
+  Trash2,
+  UserCog,
   UserRound,
+  Users,
   WalletCards,
   Zap,
 } from 'lucide-react';
@@ -40,6 +55,7 @@ import { getFreshStore, serviceMeta } from './data.js';
 const STORE_KEY = 'zhku-demo-store';
 const SESSION_KEY = 'zhku-demo-session';
 const PARTNER_APPLICATIONS_KEY = 'zhku-partner-applications';
+const THEME_KEY = 'zhku-theme';
 
 const serviceIcons = {
   water: Droplets,
@@ -47,6 +63,150 @@ const serviceIcons = {
   electricity: Zap,
   heating: Home,
   maintenance: Building2,
+};
+
+const employeeRoleOptions = ['Администратор', 'Диспетчер', 'Бухгалтер'];
+const reportServiceCodes = ['water', 'gas', 'electricity'];
+const monthNames = [
+  'Январь',
+  'Февраль',
+  'Март',
+  'Апрель',
+  'Май',
+  'Июнь',
+  'Июль',
+  'Август',
+  'Сентябрь',
+  'Октябрь',
+  'Ноябрь',
+  'Декабрь',
+];
+const monthShortNames = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+
+const objectDistricts = {
+  'house-1': 'Советский район',
+  'house-2': 'Вахитовский район',
+  'house-3': 'Приволжский район',
+};
+
+const registryCheckVariants = [
+  {
+    type: 'success',
+    title: 'Данные совпадают',
+    text: 'Сведения компании, лицензия, адреса и реквизиты соответствуют данным реестра.',
+    details: ['Новых записей нет', 'Конфликтов не найдено'],
+  },
+  {
+    type: 'warning',
+    title: 'Есть новые данные',
+    text: 'В реестре появились сведения, которых пока нет в кабинете.',
+    details: ['Новый контактный телефон: +7 843 210-40-50', 'Конфликтов с текущими реквизитами нет'],
+  },
+  {
+    type: 'warning',
+    title: 'Найдены расхождения',
+    text: 'Часть новых сведений конфликтует с текущими данными кабинета.',
+    details: ['Юридический адрес отличается от сохраненного', 'Лицензия совпадает', 'Перед обновлением нужна ручная проверка'],
+  },
+];
+
+const demoEmployeeAccounts = [
+  {
+    label: 'Диспетчер',
+    email: 'dispatcher@demo.ru',
+    password: 'demo',
+    loginName: 'dispatcher',
+    name: 'Анна Сергеева',
+    employeeRole: 'Диспетчер',
+    position: 'Диспетчер абонентской службы',
+  },
+  {
+    label: 'Бухгалтер',
+    email: 'accountant@demo.ru',
+    password: 'demo',
+    loginName: 'accountant',
+    name: 'Ольга Миронова',
+    employeeRole: 'Бухгалтер',
+    position: 'Бухгалтер по начислениям',
+  },
+  {
+    label: 'Сотрудник',
+    email: 'employee@demo.ru',
+    password: 'demo',
+    loginName: 'employee',
+    name: 'Антон Соколов',
+    employeeRole: 'Диспетчер',
+    position: 'Специалист абонентского отдела',
+  },
+];
+
+const demoReceiptSeed = [
+  ['2025-06', 'acc-1', 'water', 1260, 'paid'],
+  ['2025-06', 'acc-1', 'gas', 820, 'paid'],
+  ['2025-06', 'acc-2', 'electricity', 2040, 'paid'],
+  ['2025-07', 'acc-1', 'water', 1310, 'paid'],
+  ['2025-07', 'acc-1', 'electricity', 2290, 'paid'],
+  ['2025-07', 'acc-2', 'gas', 790, 'paid'],
+  ['2025-08', 'acc-1', 'water', 1370, 'paid'],
+  ['2025-08', 'acc-2', 'electricity', 2180, 'unpaid'],
+  ['2025-08', 'acc-2', 'gas', 840, 'paid'],
+  ['2025-09', 'acc-1', 'water', 1290, 'paid'],
+  ['2025-09', 'acc-1', 'electricity', 2410, 'paid'],
+  ['2025-09', 'acc-2', 'gas', 860, 'unpaid'],
+  ['2025-10', 'acc-1', 'water', 1440, 'paid'],
+  ['2025-10', 'acc-2', 'electricity', 2320, 'paid'],
+  ['2025-10', 'acc-2', 'water', 1190, 'paid'],
+  ['2025-11', 'acc-1', 'water', 1490, 'paid'],
+  ['2025-11', 'acc-1', 'gas', 910, 'paid'],
+  ['2025-11', 'acc-2', 'electricity', 2510, 'unpaid'],
+  ['2025-12', 'acc-1', 'water', 1530, 'paid'],
+  ['2025-12', 'acc-1', 'electricity', 2660, 'paid'],
+  ['2025-12', 'acc-2', 'gas', 930, 'paid'],
+  ['2026-04', 'acc-1', 'water', 1580, 'paid'],
+  ['2026-04', 'acc-1', 'gas', 980, 'unpaid'],
+  ['2026-04', 'acc-2', 'electricity', 2440, 'paid'],
+  ['2026-05', 'acc-1', 'water', 1620, 'unpaid'],
+  ['2026-05', 'acc-1', 'electricity', 2780, 'unpaid'],
+  ['2026-05', 'acc-2', 'gas', 940, 'paid'],
+];
+
+const defaultCompanyProfile = {
+  id: 'org-demo',
+  status: 'Одобрена',
+  legalFullName: 'Общество с ограниченной ответственностью "Комфортный дом"',
+  legalShortName: 'ООО "Комфортный дом"',
+  taxId: '1655000000',
+  kpp: '165501001',
+  ogrn: '1261600000000',
+  legalAddress: 'г. Казань, ул. Центральная, 10',
+  actualAddress: 'г. Казань, ул. Центральная, 10',
+  corporatePhone: '+7 843 200-10-20',
+  corporateEmail: 'office@comfort-dom.ru',
+  licenseNumber: 'ЛМКД-016-2026',
+  bankAccount: '40702810000000000001',
+  bankBik: '049205000',
+  registryUpdatedAt: '2026-05-08',
+  houses: [
+    { id: 'house-1', address: 'г. Казань, ул. Светлая, 18', units: 124, accounts: 118, meters: 236, debtors: 18 },
+    { id: 'house-2', address: 'г. Казань, ул. Центральная, 10', units: 96, accounts: 91, meters: 188, debtors: 11 },
+    { id: 'house-3', address: 'г. Казань, ул. Озерная, 6', units: 72, accounts: 70, meters: 142, debtors: 6 },
+  ],
+  employees: [
+    { id: 'staff-1', name: 'Иван Петров', email: 'owner@comfort-dom.ru', phone: '+7 900 555-44-33', role: 'Администратор', status: 'Активен' },
+    { id: 'staff-2', name: 'Анна Сергеева', email: 'operator@comfort-dom.ru', phone: '+7 900 222-14-15', role: 'Диспетчер', status: 'Активен' },
+    { id: 'staff-3', name: 'Ольга Миронова', email: 'accountant@comfort-dom.ru', phone: '+7 900 777-11-21', role: 'Бухгалтер', status: 'Ожидает приглашение' },
+    { id: 'staff-4', name: 'Павел Кузнецов', email: 'master@comfort-dom.ru', phone: '+7 900 333-44-55', role: 'Диспетчер', status: 'Активен' },
+  ],
+  requests: [
+    { id: 'req-1', topic: 'Протечка в подъезде', house: 'ул. Светлая, 18', status: 'В работе', assignee: 'Павел Кузнецов' },
+    { id: 'req-2', topic: 'Перерасчет начисления', house: 'ул. Центральная, 10', status: 'Новая', assignee: 'Не назначен' },
+    { id: 'req-3', topic: 'Проверка счетчика воды', house: 'ул. Озерная, 6', status: 'Закрыта', assignee: 'Анна Сергеева' },
+  ],
+  registryEvents: [
+    'Обновлены сведения о домах из реестра',
+    'Подтверждена лицензия управляющей организации',
+    'Загружены лицевые счета для сверки начислений',
+  ],
 };
 
 const formatMoney = (value) =>
@@ -58,12 +218,87 @@ const formatMoney = (value) =>
 
 const today = () => new Date().toISOString().slice(0, 10);
 
+function buildDemoReceipt(id, [periodKey, accountId, service, amount, status]) {
+  const { year, monthIndex } = parseMonthKey(periodKey);
+  const paid = status === 'paid';
+  const due = new Date(year, monthIndex + 1, 10);
+  const paidAt = new Date(year, monthIndex + 1, 5);
+
+  return {
+    id,
+    accountId,
+    period: `${monthNames[monthIndex]} ${year}`,
+    service,
+    amount,
+    status,
+    dueDate: `${due.getFullYear()}-${String(due.getMonth() + 1).padStart(2, '0')}-10`,
+    paidAt: paid ? `${paidAt.getFullYear()}-${String(paidAt.getMonth() + 1).padStart(2, '0')}-05` : null,
+    method: paid ? (Number(id.replace(/\D/g, '')) % 2 === 0 ? 'МИР' : 'СБП') : null,
+  };
+}
+
+function ensureDemoData(store) {
+  const nextUsers = [...(store.users ?? [])];
+  demoEmployeeAccounts.forEach((account) => {
+    const existing = nextUsers.find((user) => user.email === account.email && user.role === 'employee');
+    if (existing) {
+      existing.employeeRole = existing.employeeRole ?? account.employeeRole;
+      existing.position = existing.position ?? account.position;
+      existing.loginName = existing.loginName ?? account.loginName;
+      return;
+    }
+
+    nextUsers.push({
+      id: `employee-${account.loginName}`,
+      role: 'employee',
+      name: account.name,
+      email: account.email,
+      password: account.password,
+      position: account.position,
+      employeeRole: account.employeeRole,
+      loginName: account.loginName,
+    });
+  });
+
+  const nextReceipts = [...(store.receipts ?? [])];
+  demoReceiptSeed.forEach((seed, index) => {
+    const [periodKey, accountId, service] = seed;
+    const receiptId = `demo-rcp-${periodKey}-${accountId}-${service}`;
+    if (!nextReceipts.some((receipt) => receipt.id === receiptId)) {
+      nextReceipts.push(buildDemoReceipt(receiptId, seed));
+    }
+  });
+
+  const nextPayments = [...(store.payments ?? [])];
+  nextReceipts
+    .filter((receipt) => receipt.id.startsWith('demo-rcp-') && receipt.status === 'paid')
+    .forEach((receipt) => {
+      const paymentId = `pay-${receipt.id}`;
+      if (!nextPayments.some((payment) => payment.id === paymentId)) {
+        nextPayments.push({
+          id: paymentId,
+          receiptId: receipt.id,
+          method: receipt.method,
+          paidAt: receipt.paidAt,
+          amount: receipt.amount,
+        });
+      }
+    });
+
+  return {
+    ...store,
+    users: nextUsers,
+    receipts: nextReceipts,
+    payments: nextPayments,
+  };
+}
+
 function loadStore() {
   try {
     const saved = localStorage.getItem(STORE_KEY);
-    return saved ? JSON.parse(saved) : getFreshStore();
+    return ensureDemoData(saved ? JSON.parse(saved) : getFreshStore());
   } catch {
-    return getFreshStore();
+    return ensureDemoData(getFreshStore());
   }
 }
 
@@ -73,6 +308,14 @@ function loadSession() {
     return saved ? JSON.parse(saved) : null;
   } catch {
     return null;
+  }
+}
+
+function loadTheme() {
+  try {
+    return localStorage.getItem(THEME_KEY) === 'dark' ? 'dark' : 'light';
+  } catch {
+    return 'light';
   }
 }
 
@@ -91,6 +334,147 @@ function buildReceiptSummary(receipts) {
 
 function getServiceName(code) {
   return serviceMeta[code]?.name ?? code;
+}
+
+function getReportServices() {
+  return reportServiceCodes
+    .filter((code) => serviceMeta[code])
+    .map((code) => [code, serviceMeta[code]]);
+}
+
+function normalizeEmployeeRole(role) {
+  return employeeRoleOptions.includes(role) ? role : 'Диспетчер';
+}
+
+function getOrganizations(store) {
+  return store.organizations?.length ? store.organizations : [defaultCompanyProfile];
+}
+
+function getHousePaymentStats(house) {
+  return {
+    paid: Math.max(house.accounts - house.debtors, 0),
+    unpaid: house.debtors,
+  };
+}
+
+function getObjectTree(organization) {
+  const cities = new Map();
+
+  organization.houses.forEach((house) => {
+    const city = house.address.split(',')[0]?.replace('г. ', '').trim() || 'Город не указан';
+    const district = objectDistricts[house.id] ?? 'Район не указан';
+    const stats = getHousePaymentStats(house);
+
+    if (!cities.has(city)) {
+      cities.set(city, { name: city, paid: 0, unpaid: 0, districts: new Map() });
+    }
+
+    const cityItem = cities.get(city);
+    if (!cityItem.districts.has(district)) {
+      cityItem.districts.set(district, { name: district, paid: 0, unpaid: 0, houses: [] });
+    }
+
+    const districtItem = cityItem.districts.get(district);
+    const enrichedHouse = { ...house, paid: stats.paid, unpaid: stats.unpaid };
+    districtItem.houses.push(enrichedHouse);
+    districtItem.paid += stats.paid;
+    districtItem.unpaid += stats.unpaid;
+    cityItem.paid += stats.paid;
+    cityItem.unpaid += stats.unpaid;
+  });
+
+  return Array.from(cities.values()).map((city) => ({
+    ...city,
+    districts: Array.from(city.districts.values()),
+  }));
+}
+
+function makeMonthKey(year, monthIndex) {
+  return `${year}-${String(monthIndex + 1).padStart(2, '0')}`;
+}
+
+function parseMonthKey(key) {
+  const [year, month] = key.split('-').map(Number);
+  return { year, monthIndex: month - 1 };
+}
+
+function getLastYearPeriodOptions() {
+  const now = new Date();
+
+  return Array.from({ length: 12 }, (_, index) => {
+    const date = new Date(now.getFullYear(), now.getMonth() - 11 + index, 1);
+    const monthIndex = date.getMonth();
+    const year = date.getFullYear();
+
+    return {
+      key: makeMonthKey(year, monthIndex),
+      label: `${monthNames[monthIndex]} ${year}`,
+    };
+  });
+}
+
+function getThreeMonthWindow(periodKey) {
+  const { year, monthIndex } = parseMonthKey(periodKey);
+
+  return Array.from({ length: 3 }, (_, index) => {
+    const date = new Date(year, monthIndex - 2 + index, 1);
+    const itemMonthIndex = date.getMonth();
+    const itemYear = date.getFullYear();
+
+    return {
+      key: makeMonthKey(itemYear, itemMonthIndex),
+      label: monthShortNames[itemMonthIndex],
+      fullLabel: `${monthNames[itemMonthIndex]} ${itemYear}`,
+    };
+  });
+}
+
+function getReceiptPeriodKey(period) {
+  const [monthName, yearText] = period.split(' ');
+  const monthIndex = monthNames.findIndex((name) => name.toLowerCase() === monthName?.toLowerCase());
+  const year = Number(yearText);
+
+  if (monthIndex < 0 || !year) {
+    return '';
+  }
+
+  return makeMonthKey(year, monthIndex);
+}
+
+function getLatestReceiptPeriodKey(receipts) {
+  return receipts
+    .map((receipt) => getReceiptPeriodKey(receipt.period))
+    .filter(Boolean)
+    .sort()
+    .at(-1);
+}
+
+function buildCompanyFromApplication(application, orgId) {
+  return {
+    ...defaultCompanyProfile,
+    ...application,
+    id: orgId,
+    status: 'Одобрена',
+    registryUpdatedAt: today(),
+    houses: defaultCompanyProfile.houses,
+    employees: [
+      {
+        id: `staff-${Date.now()}`,
+        name: application.ownerName || 'Администратор компании',
+        email: application.ownerEmail || 'owner@company.ru',
+        phone: application.ownerPhone || '',
+        role: 'Администратор',
+        status: 'Активен',
+      },
+      ...defaultCompanyProfile.employees.slice(1),
+    ],
+    requests: defaultCompanyProfile.requests,
+    registryEvents: [
+      'Заявка компании одобрена',
+      'Профиль организации создан по данным заявки',
+      'Сведения из реестра подготовлены к сверке',
+    ],
+  };
 }
 
 function ServiceBadge({ service }) {
@@ -134,6 +518,7 @@ function Header({ user, onLogout }) {
           <NavLink to="/partner">Стать партнером</NavLink>
           {user?.role === 'payer' && <NavLink to="/app">Кабинет</NavLink>}
           {user?.role === 'employee' && <NavLink to="/employee">Сотрудник</NavLink>}
+          {user?.role === 'companyAdmin' && <NavLink to="/company-admin">Компания</NavLink>}
           {user ? (
             <button className="ghost-button" type="button" onClick={onLogout}>
               <LogOut size={18} />
@@ -244,49 +629,51 @@ const demoCompanies = [
 
 function ProjectFooter() {
   return (
-    <footer className="site-footer">
-      <div className="footer-grid">
-        <div className="footer-brand">
-          <Link to="/" className="brand-link" aria-label="На главную">
-            <span className="brand-mark">
-              <Building2 size={22} />
-            </span>
-            <span>
-              <strong>ЖКУ Контроль</strong>
-              <small>учет коммунальных платежей</small>
-            </span>
-          </Link>
-        </div>
-        <div className="footer-links">
-          <Link to="/about">
-            Информация о проекте
-          </Link>
-          <a href="/downloads/zhku-control-desktop.txt" download>
-            Скачать для компьютера
-          </a>
-          <a href="/downloads/zhku-control-mobile.txt" download>
-            Скачать для телефона
-          </a>
-          <Link to="/partner">
-            Стать партнером
-          </Link>
-          <Link to="/privacy">
-            Политика конфиденциальности
-          </Link>
-        </div>
-        <div className="footer-contact">
-          <div className="footer-contact-title">
-            <Landmark size={24} />
-            <strong>Абонентский отдел</strong>
+    <footer className="footer-shell">
+      <div className="site-footer">
+        <div className="footer-grid">
+          <div className="footer-brand">
+            <Link to="/" className="brand-link" aria-label="На главную">
+              <span className="brand-mark">
+                <Building2 size={22} />
+              </span>
+              <span>
+                <strong>ЖКУ Контроль</strong>
+                <small>учет коммунальных платежей</small>
+              </span>
+            </Link>
           </div>
-          <span>Пн-Пт 9:00-18:00</span>
-          <span>support@zhku-demo.ru</span>
-          <span>+7 800 250-10-20</span>
+          <div className="footer-links">
+            <Link to="/about">
+              Информация о проекте
+            </Link>
+            <a href="/downloads/zhku-control-desktop.txt" download>
+              Скачать для компьютера
+            </a>
+            <a href="/downloads/zhku-control-mobile.txt" download>
+              Скачать для телефона
+            </a>
+            <Link to="/partner">
+              Стать партнером
+            </Link>
+            <Link to="/privacy">
+              Политика конфиденциальности
+            </Link>
+          </div>
+          <div className="footer-contact">
+            <div className="footer-contact-title">
+              <Landmark size={24} />
+              <strong>Абонентский отдел</strong>
+            </div>
+            <span>Пн-Пт 9:00-18:00</span>
+            <span>support@zhku-demo.ru</span>
+            <span>+7 800 250-10-20</span>
+          </div>
         </div>
-      </div>
-      <div className="footer-note">
-        <span>© 2026 ЖКУ Контроль. Все права защищены.</span>
-        <span>Сделано для учета коммунальных платежей</span>
+        <div className="footer-note">
+          <span>© 2026 ЖКУ Контроль. Все права защищены.</span>
+          <span>Сделано для учета коммунальных платежей</span>
+        </div>
       </div>
     </footer>
   );
@@ -450,9 +837,8 @@ function HomePage({ store, user, onLogout }) {
             ))}
           </div>
         </section>
-
-        <ProjectFooter />
       </main>
+      <ProjectFooter />
     </div>
   );
 }
@@ -558,7 +944,8 @@ function PrivacyPage({ user, onLogout }) {
   );
 }
 
-function PartnerPage({ user, onLogout }) {
+function PartnerPage({ user, onLogout, approvePartnerApplication }) {
+  const navigate = useNavigate();
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
   const [invalidFields, setInvalidFields] = useState([]);
@@ -616,7 +1003,7 @@ function PartnerPage({ user, onLogout }) {
 
     const application = {
       id: `org-${Date.now()}`,
-      verificationStatus: 'На модерации',
+      verificationStatus: 'Одобрена',
       createdAt: new Date().toISOString(),
       firstUserAccess: 'Первый зарегистрировавший компанию пользователь становится администратором',
       ...form,
@@ -630,6 +1017,8 @@ function PartnerPage({ user, onLogout }) {
     setSaved(true);
     setError('');
     setInvalidFields([]);
+    approvePartnerApplication(application);
+    navigate('/company-admin');
   };
 
   const fieldClass = (field) => (invalidFields.includes(field) ? 'field-error' : undefined);
@@ -744,7 +1133,9 @@ function PartnerPage({ user, onLogout }) {
 function AuthPage({ user, login, registerPayer, onLogout }) {
   const navigate = useNavigate();
   const params = new URLSearchParams(window.location.search);
-  const initialRole = params.get('role') === 'employee' ? 'employee' : 'payer';
+  const roleParam = params.get('role');
+  const initialRole =
+    roleParam === 'employee' || roleParam === 'companyAdmin' ? roleParam : 'payer';
   const [role, setRole] = useState(initialRole);
   const [mode, setMode] = useState('login');
   const [error, setError] = useState('');
@@ -792,10 +1183,10 @@ function AuthPage({ user, login, registerPayer, onLogout }) {
   const submit = (event) => {
     event.preventDefault();
     const requiredFields = mode === 'register'
-      ? role === 'employee'
+      ? role !== 'payer'
         ? ['company', 'name', 'loginName', 'phone', 'email', 'password']
         : ['name', 'loginName', 'phone', 'email', 'accountNumber', 'password']
-      : role === 'employee'
+      : role !== 'payer'
         ? ['company', 'loginName', 'email', 'password']
         : ['accountNumber', 'loginName', 'email', 'password'];
     const missingFields = requiredFields.filter((field) => !String(form[field] ?? '').trim());
@@ -807,8 +1198,8 @@ function AuthPage({ user, login, registerPayer, onLogout }) {
     }
 
     if (mode === 'register') {
-      if (role === 'employee') {
-        setError('Регистрация сотрудника будет доступна после приглашения администратора компании.');
+      if (role !== 'payer') {
+        setError('Регистрация сотрудников и администраторов выполняется через заявку компании и приглашение.');
         return;
       }
 
@@ -826,7 +1217,7 @@ function AuthPage({ user, login, registerPayer, onLogout }) {
       setError(signed.message);
       return;
     }
-    navigate(role === 'employee' ? '/employee' : '/app');
+    navigate(role === 'companyAdmin' ? '/company-admin' : role === 'employee' ? '/employee' : '/app');
   };
 
   const switchToEmployee = () => {
@@ -836,6 +1227,21 @@ function AuthPage({ user, login, registerPayer, onLogout }) {
       ...current,
       loginName: 'employee',
       email: 'employee@demo.ru',
+      password: 'demo',
+      company: 'УК Комфортный дом',
+    }));
+    setCompanyQuery('УК Комфортный дом');
+    setError('');
+    setInvalidFields([]);
+  };
+
+  const switchToCompanyAdmin = () => {
+    setRole('companyAdmin');
+    setMode('login');
+    setForm((current) => ({
+      ...current,
+      loginName: 'admin',
+      email: 'owner@comfort-dom.ru',
       password: 'demo',
       company: 'УК Комфортный дом',
     }));
@@ -858,6 +1264,28 @@ function AuthPage({ user, login, registerPayer, onLogout }) {
     setInvalidFields([]);
   };
 
+  const quickEmployeeLogin = (account) => {
+    setRole('employee');
+    setMode('login');
+    setCompanyQuery('УК Комфортный дом');
+    setForm((current) => ({
+      ...current,
+      loginName: account.loginName,
+      email: account.email,
+      password: account.password,
+      company: 'УК Комфортный дом',
+    }));
+    setError('');
+    setInvalidFields([]);
+
+    const signed = login(account.email, account.password, 'employee');
+    if (!signed.ok) {
+      setError(signed.message);
+      return;
+    }
+    navigate('/employee');
+  };
+
   const fieldClass = (field) => (invalidFields.includes(field) ? 'field-error' : undefined);
 
   return (
@@ -867,12 +1295,36 @@ function AuthPage({ user, login, registerPayer, onLogout }) {
       <main className="auth-page">
         <section className="auth-card auth-card-large">
           <span className="section-kicker">Вход в систему</span>
-          <h1>{role === 'employee' ? 'Вход сотрудника ЖКУ' : 'Вход гражданина плательщика'}</h1>
+          <h1>
+            {role === 'companyAdmin'
+              ? 'Вход администратора компании'
+              : role === 'employee'
+                ? 'Вход сотрудника ЖКУ'
+                : 'Вход гражданина плательщика'}
+          </h1>
           <p>
-            {role === 'employee'
+            {role !== 'payer'
               ? 'Выберите компанию и войдите по логину, почте и паролю.'
               : 'Войдите по лицевому счету, логину, почте и паролю.'}
           </p>
+          {role === 'employee' && (
+            <div className="demo-login-panel">
+              <span>Быстрый вход сотрудника</span>
+              <div className="demo-login-buttons">
+                {demoEmployeeAccounts.map((account) => (
+                  <button
+                    className="ghost-button"
+                    key={account.email}
+                    type="button"
+                    onClick={() => quickEmployeeLogin(account)}
+                  >
+                    <LogIn size={18} />
+                    {account.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <form className="stack-form" onSubmit={submit}>
             {mode === 'register' && (
               <>
@@ -893,7 +1345,7 @@ function AuthPage({ user, login, registerPayer, onLogout }) {
                   <input
                     value={form.email}
                     onChange={(event) => update('email', event.target.value)}
-                    placeholder={role === 'employee' ? 'employee@demo.ru' : 'payer@demo.ru'}
+                    placeholder={role === 'companyAdmin' ? 'owner@comfort-dom.ru' : role === 'employee' ? 'employee@demo.ru' : 'payer@demo.ru'}
                   />
                 </label>
                 {role === 'payer' && (
@@ -918,7 +1370,7 @@ function AuthPage({ user, login, registerPayer, onLogout }) {
               </label>
             )}
 
-            {role === 'employee' && (
+            {role !== 'payer' && (
               <label className={`company-search ${fieldClass('company') ?? ''}`} ref={companySearchRef}>
                 Компания ЖКУ
                 <div className="company-input-row">
@@ -970,7 +1422,7 @@ function AuthPage({ user, login, registerPayer, onLogout }) {
                 <input
                   value={form.email}
                   onChange={(event) => update('email', event.target.value)}
-                  placeholder={role === 'employee' ? 'employee@demo.ru' : 'payer@demo.ru'}
+                  placeholder={role === 'companyAdmin' ? 'owner@comfort-dom.ru' : role === 'employee' ? 'employee@demo.ru' : 'payer@demo.ru'}
                 />
               </label>
             )}
@@ -987,7 +1439,13 @@ function AuthPage({ user, login, registerPayer, onLogout }) {
 
             <button type="submit" className="wide-button">
               <LogIn size={18} />
-              {mode === 'register' ? 'Создать кабинет' : role === 'employee' ? 'Войти как сотрудник' : 'Войти'}
+              {mode === 'register'
+                ? 'Создать кабинет'
+                : role === 'companyAdmin'
+                  ? 'Войти как администратор'
+                  : role === 'employee'
+                    ? 'Войти как сотрудник'
+                    : 'Войти'}
             </button>
           </form>
 
@@ -1008,8 +1466,11 @@ function AuthPage({ user, login, registerPayer, onLogout }) {
                 <button type="button" className="underlined-action" onClick={switchToEmployee}>
                   войти как сотрудник ЖКУ
                 </button>
+                <button type="button" className="underlined-action" onClick={switchToCompanyAdmin}>
+                  войти как администратор компании
+                </button>
               </>
-            ) : (
+            ) : role === 'employee' ? (
               <>
                 <button
                   type="button"
@@ -1025,6 +1486,21 @@ function AuthPage({ user, login, registerPayer, onLogout }) {
                 <button type="button" className="underlined-action" onClick={switchToPayer}>
                   войти как гражданин плательщик
                 </button>
+                <button type="button" className="underlined-action" onClick={switchToCompanyAdmin}>
+                  войти как администратор компании
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/partner" className="muted-action">
+                  Регистрация компании
+                </Link>
+                <button type="button" className="underlined-action" onClick={switchToEmployee}>
+                  войти как сотрудник ЖКУ
+                </button>
+                <button type="button" className="underlined-action" onClick={switchToPayer}>
+                  войти как гражданин плательщик
+                </button>
               </>
             )}
           </div>
@@ -1032,6 +1508,85 @@ function AuthPage({ user, login, registerPayer, onLogout }) {
       </main>
       <MinimalFooter />
     </div>
+  );
+}
+
+function ThemeSwitch({ theme, setTheme }) {
+  const dark = theme === 'dark';
+
+  return (
+    <label className="theme-switch">
+      <input
+        checked={dark}
+        type="checkbox"
+        onChange={(event) => setTheme(event.target.checked ? 'dark' : 'light')}
+      />
+      <span className="theme-track">
+        <span className="theme-thumb">{dark ? <Moon size={14} /> : <Sun size={14} />}</span>
+      </span>
+      <small>{dark ? 'Темная тема' : 'Светлая тема'}</small>
+    </label>
+  );
+}
+
+function UserMenu({ user, logout, theme, setTheme, settingsTo }) {
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const closeOnOutsideClick = (event) => {
+      if (!menuRef.current?.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', closeOnOutsideClick);
+    return () => document.removeEventListener('mousedown', closeOnOutsideClick);
+  }, []);
+
+  return (
+    <div className="user-menu" ref={menuRef}>
+      <button className="profile-button" type="button" onClick={() => setOpen((current) => !current)}>
+        <UserRound size={20} />
+        <span>{user.name}</span>
+        <ChevronDown size={16} />
+      </button>
+      {open && (
+        <div className="profile-menu">
+          <div className="profile-menu-head">
+            <strong>{user.name}</strong>
+            <span>{user.email}</span>
+          </div>
+          <ThemeSwitch theme={theme} setTheme={setTheme} />
+          <Link className="profile-menu-link" to={settingsTo} onClick={() => setOpen(false)}>
+            <Settings size={18} />
+            Настройки
+          </Link>
+          <button className="profile-menu-link danger-link" type="button" onClick={logout}>
+            <LogOut size={18} />
+            Выйти
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function WorkspaceTopbar({ user, logout, theme, setTheme, settingsTo }) {
+  return (
+    <header className="workspace-topbar">
+      <div>
+        <span className="section-kicker">Рабочая область</span>
+        <strong>{user.role === 'companyAdmin' ? 'Администратор компании' : user.name}</strong>
+      </div>
+      <UserMenu
+        user={user}
+        logout={logout}
+        theme={theme}
+        setTheme={setTheme}
+        settingsTo={settingsTo}
+      />
+    </header>
   );
 }
 
@@ -1043,7 +1598,7 @@ function RequireRole({ user, role, children }) {
   return children;
 }
 
-function PayerLayout({ user, store, logout, updateProfile, payReceipt }) {
+function PayerLayout({ user, store, logout, updateProfile, payReceipt, theme, setTheme }) {
   const account = store.accounts.find((item) => item.id === user.accountId);
   const receipts = store.receipts.filter((item) => item.accountId === user.accountId);
   const summary = buildReceiptSummary(receipts);
@@ -1078,17 +1633,22 @@ function PayerLayout({ user, store, logout, updateProfile, payReceipt }) {
             <UserRound size={18} />
             Профиль
           </NavLink>
+          <NavLink to="/app/settings">
+            <Settings size={18} />
+            Настройки
+          </NavLink>
         </nav>
-
-        <button className="logout-button" type="button" onClick={logout}>
-          <LogOut size={18} />
-          Выйти
-        </button>
       </aside>
 
       <main className="workspace">
-        <Outlet context={{ user, account, receipts, summary, updateProfile, payReceipt }} />
-        <ProjectFooter />
+        <WorkspaceTopbar
+          user={user}
+          logout={logout}
+          theme={theme}
+          setTheme={setTheme}
+          settingsTo="/app/settings"
+        />
+        <Outlet context={{ user, account, receipts, summary, updateProfile, payReceipt, theme, setTheme }} />
       </main>
     </div>
   );
@@ -1097,11 +1657,11 @@ function PayerLayout({ user, store, logout, updateProfile, payReceipt }) {
 function PageTitle({ eyebrow, title, children }) {
   return (
     <div className="page-title">
-      <span className="section-kicker">{eyebrow}</span>
-      <div>
+      <div className="page-title-main">
+        {eyebrow && <span className="section-kicker">{eyebrow}</span>}
         <h1>{title}</h1>
-        {children && <p>{children}</p>}
       </div>
+      {children && <p>{children}</p>}
     </div>
   );
 }
@@ -1427,9 +1987,239 @@ function ProfilePage() {
   );
 }
 
-function EmployeePage({ user, store, logout }) {
+function SettingsPage({ scope = 'личного кабинета' }) {
+  const { user, theme, setTheme, updateProfile } = useOutletContext();
+  const [form, setForm] = useState({
+    name: user.name,
+    email: user.email,
+    phone: user.phone ?? '',
+  });
+  const [saved, setSaved] = useState(false);
+
+  const update = (field, value) => {
+    setSaved(false);
+    setForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const submitAccount = (event) => {
+    event.preventDefault();
+    updateProfile?.(form);
+    setSaved(true);
+  };
+
+  return (
+    <>
+      <PageTitle title="Параметры кабинета">
+        Настройка внешнего вида, уведомлений и данных аккаунта {scope}.
+      </PageTitle>
+
+      <section className="settings-grid">
+        <div className="work-panel">
+          <h2>Внешний вид</h2>
+          <div className="settings-row">
+            <div>
+              <strong>Тема интерфейса</strong>
+              <span>Переключение применяется ко всему сайту.</span>
+            </div>
+            <ThemeSwitch theme={theme} setTheme={setTheme} />
+          </div>
+        </div>
+
+        <div className="work-panel">
+          <h2>Уведомления</h2>
+          <div className="settings-row">
+            <div>
+              <strong>Важные события</strong>
+              <span>Оплаты, новые квитанции, заявки и изменения профиля.</span>
+            </div>
+            <button className="ghost-button" type="button" onClick={() => setSaved(true)}>
+              <Bell size={18} />
+              Включены
+            </button>
+          </div>
+        </div>
+
+        <form className="work-panel account-settings-form" onSubmit={submitAccount}>
+          <h2>Аккаунт</h2>
+          <label>
+            Имя
+            <input value={form.name} onChange={(event) => update('name', event.target.value)} />
+          </label>
+          <label>
+            Почта
+            <input type="email" value={form.email} onChange={(event) => update('email', event.target.value)} />
+          </label>
+          <label>
+            Телефон
+            <input value={form.phone} onChange={(event) => update('phone', event.target.value)} />
+          </label>
+          <span className="form-hint">Изменения применятся только после сохранения.</span>
+          <button className="wide-button" type="submit">
+            <Pencil size={18} />
+            Сохранить
+          </button>
+        </form>
+      </section>
+      {saved && <div className="inline-success settings-saved">Изменения сохранены</div>}
+    </>
+  );
+}
+
+function EmployeeLayout({ user, store, logout, updateProfile, theme, setTheme }) {
   const summary = buildReceiptSummary(store.receipts);
-  const byService = Object.entries(serviceMeta).map(([code, meta]) => {
+
+  return (
+    <div className="app-shell">
+      <aside className="sidebar">
+        <Link to="/" className="brand-link side-brand">
+          <span className="brand-mark">
+            <Building2 size={22} />
+          </span>
+          <span>
+            <strong>ЖКУ Контроль</strong>
+            <small>{user.employeeRole ?? 'сотрудник ЖКУ'}</small>
+          </span>
+        </Link>
+
+        <nav className="side-nav">
+          <NavLink end to="/employee">
+            <LayoutDashboard size={18} />
+            Главное
+          </NavLink>
+          <NavLink to="/employee/settings">
+            <Settings size={18} />
+            Настройки
+          </NavLink>
+        </nav>
+      </aside>
+
+      <main className="workspace">
+        <WorkspaceTopbar
+          user={user}
+          logout={logout}
+          theme={theme}
+          setTheme={setTheme}
+          settingsTo="/employee/settings"
+        />
+        <Outlet context={{ user, store, summary, updateProfile, theme, setTheme }} />
+      </main>
+    </div>
+  );
+}
+
+function EmployeeDashboard() {
+  const { user, store, summary } = useOutletContext();
+  const employeeRole = user.employeeRole ?? (user.email.includes('accountant') ? 'Бухгалтер' : 'Диспетчер');
+
+  if (employeeRole === 'Бухгалтер') {
+    return <AccountantDashboard user={user} store={store} summary={summary} />;
+  }
+
+  return <DispatcherDashboard user={user} store={store} summary={summary} />;
+}
+
+function DispatcherDashboard({ user, store, summary }) {
+  const tickets = [
+    {
+      id: 'ticket-1',
+      topic: 'Не отображается оплата за воду',
+      account: '407900000001',
+      resident: 'Ирина Волкова',
+      status: 'Новый',
+      priority: 'Высокий',
+    },
+    {
+      id: 'ticket-2',
+      topic: 'Нужна детализация начисления по электричеству',
+      account: '407900000002',
+      resident: 'Демо-абонент',
+      status: 'В работе',
+      priority: 'Средний',
+    },
+    {
+      id: 'ticket-3',
+      topic: 'Ошибка в периоде квитанции',
+      account: '407900000001',
+      resident: 'Ирина Волкова',
+      status: 'Ожидает ответа',
+      priority: 'Обычный',
+    },
+  ];
+  const disputedReceipts = store.receipts
+    .filter((receipt) => receipt.status === 'unpaid')
+    .slice(0, 5)
+    .map((receipt) => ({
+      ...receipt,
+      accountNumber: store.accounts.find((account) => account.id === receipt.accountId)?.number ?? receipt.accountId,
+    }));
+
+  return (
+    <>
+      <PageTitle title="Кабинет диспетчера">
+        Обращения жителей по квитанциям, оплатам, начислениям и спорным периодам.
+      </PageTitle>
+
+      <section className="stats-grid">
+        <StatCard icon={MessageSquare} label="Новых обращений" value={tickets.filter((item) => item.status === 'Новый').length} />
+        <StatCard icon={AlertCircle} label="Спорных квитанций" value={disputedReceipts.length} tone="danger" />
+        <StatCard icon={ReceiptText} label="Не оплачено" value={summary.unpaidCount} />
+      </section>
+
+      <section className="employee-grid">
+        <div className="work-panel">
+          <h2>Очередь обращений</h2>
+          <div className="ticket-list">
+            {tickets.map((ticket) => (
+              <article className="ticket-card" key={ticket.id}>
+                <div>
+                  <strong>{ticket.topic}</strong>
+                  <span>{ticket.resident}, лицевой счет {ticket.account}</span>
+                </div>
+                <span className={`status-chip ${ticket.status === 'Новый' ? 'warning' : 'success'}`}>
+                  {ticket.status}
+                </span>
+                <small>{ticket.priority}</small>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <div className="work-panel">
+          <h2>Квитанции с вопросами</h2>
+          <div className="service-table">
+            {disputedReceipts.map((receipt) => (
+              <div key={receipt.id}>
+                <ServiceBadge service={receipt.service} />
+                <span>{receipt.period}</span>
+                <strong>{receipt.accountNumber}</strong>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="module-grid">
+        {[
+          { icon: ReceiptText, title: 'Проверить квитанцию', text: 'Открыть период, услугу, сумму и историю статусов.' },
+          { icon: MessageSquare, title: 'Ответить жителю', text: 'Подготовить комментарий по начислению или оплате.' },
+          { icon: Database, title: 'Передать на сверку', text: 'Отправить спорную запись бухгалтерии или администратору.' },
+        ].map((item) => {
+          const Icon = item.icon;
+          return (
+            <article className="module-card" key={item.title}>
+              <Icon size={24} />
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </article>
+          );
+        })}
+      </section>
+    </>
+  );
+}
+
+function AccountantDashboard({ user, store, summary }) {
+  const byService = getReportServices().map(([code, meta]) => {
     const serviceReceipts = store.receipts.filter((item) => item.service === code);
     return {
       code,
@@ -1438,62 +2228,801 @@ function EmployeePage({ user, store, logout }) {
       amount: serviceReceipts.reduce((sum, item) => sum + item.amount, 0),
     };
   });
+  const paidReceipts = store.receipts.filter((receipt) => receipt.status === 'paid');
+  const monthlyRevenue = getLastYearPeriodOptions()
+    .slice(-6)
+    .map((period) => {
+      const amount = paidReceipts
+        .filter((receipt) => getReceiptPeriodKey(receipt.period) === period.key)
+        .reduce((sum, receipt) => sum + receipt.amount, 0);
+
+      return { ...period, amount };
+    });
+  const documents = [
+    { title: 'Реестр начислений', meta: 'XLSX, все услуги' },
+    { title: 'Акт сверки оплат', meta: 'PDF, выбранный период' },
+    { title: 'Реестр должников', meta: 'CSV, неоплаченные счета' },
+    { title: 'Отчет по выручке', meta: 'XLSX, помесячно' },
+  ];
 
   return (
-    <div className="page">
-      <Header user={user} onLogout={logout} />
-      <main className="employee-page">
-        <PageTitle eyebrow="Сотрудник ЖКУ" title="Служебное главное меню">
-          Базовая статистика по фактическим статусам квитанций.
-        </PageTitle>
+    <>
+      <PageTitle title="Кабинет бухгалтера">
+        Документы, выгрузки, выручка, задолженность и сверка денежных показателей.
+      </PageTitle>
 
+      <section className="stats-grid">
+        <StatCard icon={CheckCircle2} label="Выручка" value={formatMoney(summary.paidAmount)} tone="success" />
+        <StatCard icon={AlertCircle} label="Дебиторка" value={formatMoney(summary.unpaidAmount)} tone="danger" />
+        <StatCard icon={FileSpreadsheet} label="Платежей" value={store.payments.length} />
+      </section>
+
+      <section className="employee-grid">
+        <div className="work-panel">
+          <h2>Денежная сводка</h2>
+          <dl className="detail-list compact">
+            <div>
+              <dt>Оплаченных квитанций</dt>
+              <dd>{summary.paidCount}</dd>
+            </div>
+            <div>
+              <dt>Неоплаченных квитанций</dt>
+              <dd>{summary.unpaidCount}</dd>
+            </div>
+            <div>
+              <dt>Сотрудник</dt>
+              <dd>{user.name}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div className="work-panel">
+          <h2>По услугам</h2>
+          <div className="service-table">
+            {byService.map((item) => (
+              <div key={item.code}>
+                <ServiceBadge service={item.code} />
+                <span>{formatMoney(item.amount)}</span>
+                <strong>{item.unpaid} долг.</strong>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="employee-grid">
+        <div className="work-panel">
+          <h2>Выручка за последние месяцы</h2>
+          <div className="finance-list">
+            {monthlyRevenue.map((item) => (
+              <div key={item.key}>
+                <span>{item.label}</span>
+                <strong>{formatMoney(item.amount)}</strong>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="work-panel">
+          <h2>Документы и выгрузки</h2>
+          <div className="document-grid">
+            {documents.map((document) => (
+              <button className="document-action" key={document.title} type="button">
+                <FileSpreadsheet size={20} />
+                <span>
+                  <strong>{document.title}</strong>
+                  <small>{document.meta}</small>
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+function CompanyAdminLayout({
+  user,
+  store,
+  logout,
+  updateProfile,
+  theme,
+  setTheme,
+  updateCompanyEmployeeRole,
+  addCompanyEmployee,
+  removeCompanyEmployee,
+}) {
+  const organizations = getOrganizations(store);
+  const organization =
+    organizations.find((item) => item.id === user.orgId) ?? organizations[0] ?? defaultCompanyProfile;
+  const summary = buildReceiptSummary(store.receipts);
+  const companyStats = {
+    houses: organization.houses.reduce((sum, item) => sum + 1, 0),
+    units: organization.houses.reduce((sum, item) => sum + item.units, 0),
+    accounts: organization.houses.reduce((sum, item) => sum + item.accounts, 0),
+    meters: organization.houses.reduce((sum, item) => sum + item.meters, 0),
+    debtors: organization.houses.reduce((sum, item) => sum + item.debtors, 0),
+  };
+
+  return (
+    <div className="app-shell">
+      <aside className="sidebar">
+        <Link to="/" className="brand-link side-brand">
+          <span className="brand-mark">
+            <Building2 size={22} />
+          </span>
+          <span>
+            <strong>ЖКУ Контроль</strong>
+            <small>{organization.legalShortName}</small>
+          </span>
+        </Link>
+
+        <nav className="side-nav">
+          <NavLink end to="/company-admin">
+            <LayoutDashboard size={18} />
+            Главное
+          </NavLink>
+          <NavLink to="/company-admin/company">
+            <Database size={18} />
+            Реестр
+          </NavLink>
+          <NavLink to="/company-admin/employees">
+            <Users size={18} />
+            Сотрудники
+          </NavLink>
+          <NavLink to="/company-admin/objects">
+            <House size={18} />
+            Объекты
+          </NavLink>
+          <NavLink to="/company-admin/statistics">
+            <BarChart3 size={18} />
+            Статистика
+          </NavLink>
+          <NavLink to="/company-admin/settings">
+            <Settings size={18} />
+            Настройки
+          </NavLink>
+        </nav>
+      </aside>
+
+      <main className="workspace">
+        <WorkspaceTopbar
+          user={user}
+          logout={logout}
+          theme={theme}
+          setTheme={setTheme}
+          settingsTo="/company-admin/settings"
+        />
+        <Outlet
+          context={{
+            user,
+            store,
+            organization,
+            summary,
+            companyStats,
+            updateProfile,
+            theme,
+            setTheme,
+            updateCompanyEmployeeRole,
+            addCompanyEmployee,
+            removeCompanyEmployee,
+          }}
+        />
+      </main>
+    </div>
+  );
+}
+
+function CompanyAdminDashboard() {
+  const { organization, summary, companyStats } = useOutletContext();
+  const unpaidPercent = Math.round((summary.unpaidCount / Math.max(summary.paidCount + summary.unpaidCount, 1)) * 100);
+
+  const cabinetModules = [
+    { icon: Database, title: 'Данные из реестра', text: 'Название, ИНН, лицензия, реквизиты и дата последней сверки.', to: '/company-admin/company' },
+    { icon: Users, title: 'Сотрудники и доступ', text: 'Назначение ролей и контроль приглашений сотрудников компании.', to: '/company-admin/employees' },
+    { icon: House, title: 'Объекты управления', text: 'Дома, помещения, лицевые счета и приборы учета по адресам.', to: '/company-admin/objects' },
+    { icon: MessageSquare, title: 'Обращения жителей', text: 'Заявки, статусы, ответственные и история обработки обращений.', to: '/company-admin/objects' },
+    { icon: FileSpreadsheet, title: 'Отчеты и выгрузки', text: 'Статистика оплат, должники, начисления и файлы для дальнейшей обработки.', to: '/company-admin/statistics' },
+    { icon: Bell, title: 'Журнал событий', text: 'Уведомления о загрузках, изменениях данных и действиях сотрудников.', to: '/company-admin/settings' },
+  ];
+
+  return (
+    <>
+      <PageTitle title="Кабинет администратора">
+        {organization.legalShortName}
+      </PageTitle>
+
+      <section className="stats-grid">
+        <StatCard icon={House} label="Домов в управлении" value={companyStats.houses} />
+        <StatCard icon={ReceiptText} label="Лицевых счетов" value={companyStats.accounts} />
+        <StatCard icon={AlertCircle} label="Доля неоплаты" value={`${unpaidPercent}%`} tone="danger" />
+      </section>
+
+      <section className="dashboard-grid">
+        <div className="work-panel">
+          <h2>Данные из реестра</h2>
+          <dl className="detail-list compact">
+            <div>
+              <dt>Статус компании</dt>
+              <dd>{organization.status}</dd>
+            </div>
+            <div>
+              <dt>ИНН</dt>
+              <dd>{organization.taxId}</dd>
+            </div>
+            <div>
+              <dt>Лицензия</dt>
+              <dd>{organization.licenseNumber}</dd>
+            </div>
+            <div>
+              <dt>Последняя сверка</dt>
+              <dd>{organization.registryUpdatedAt}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div className="work-panel">
+          <h2>Что требует внимания</h2>
+          <div className="attention-list">
+            <span><AlertCircle size={18} /> {companyStats.debtors} лицевых счетов с задолженностью</span>
+            <span><MessageSquare size={18} /> 2 обращения ждут назначения ответственного</span>
+            <span><Users size={18} /> 1 сотрудник ожидает подтверждение приглашения</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="module-grid">
+        {cabinetModules.map((module) => {
+          const Icon = module.icon;
+          return (
+            <Link className="module-card" key={module.title} to={module.to}>
+              <Icon size={24} />
+              <h3>{module.title}</h3>
+              <p>{module.text}</p>
+            </Link>
+          );
+        })}
+      </section>
+    </>
+  );
+}
+
+function CompanyRegistryPage() {
+  const { organization } = useOutletContext();
+  const [checkResult, setCheckResult] = useState(null);
+
+  const runRegistryCheck = () => {
+    setCheckResult(registryCheckVariants[Math.floor(Math.random() * registryCheckVariants.length)]);
+  };
+
+  return (
+    <>
+      <PageTitle title="Сведения о компании">
+        Данные отображаются так, как будто они прошли сверку с реестром.
+      </PageTitle>
+
+      <section className="company-registry-grid">
+        <div className="work-panel">
+          <h2>Юридические сведения</h2>
+          <dl className="detail-list compact">
+            <div><dt>Полное наименование</dt><dd>{organization.legalFullName}</dd></div>
+            <div><dt>Краткое наименование</dt><dd>{organization.legalShortName}</dd></div>
+            <div><dt>ИНН</dt><dd>{organization.taxId}</dd></div>
+            <div><dt>КПП</dt><dd>{organization.kpp}</dd></div>
+            <div><dt>ОГРН</dt><dd>{organization.ogrn}</dd></div>
+            <div><dt>Лицензия</dt><dd>{organization.licenseNumber}</dd></div>
+            <div><dt>Статус заявки</dt><dd><span className="status-chip success registry-status">{organization.status}</span></dd></div>
+          </dl>
+        </div>
+
+        <div className="work-panel">
+          <h2>Контакты и реквизиты</h2>
+          <dl className="detail-list compact">
+            <div><dt>Юридический адрес</dt><dd>{organization.legalAddress}</dd></div>
+            <div><dt>Фактический адрес</dt><dd>{organization.actualAddress}</dd></div>
+            <div><dt>Телефон</dt><dd>{organization.corporatePhone}</dd></div>
+            <div><dt>Почта</dt><dd>{organization.corporateEmail}</dd></div>
+            <div><dt>Расчетный счет</dt><dd>{organization.bankAccount}</dd></div>
+            <div><dt>БИК</dt><dd>{organization.bankBik}</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <section className="work-panel">
+        <div className="panel-heading-row">
+          <h2>Последние события сверки</h2>
+          <button className="ghost-button" type="button" onClick={runRegistryCheck}>
+            <Database size={18} />
+            Сверить с реестром
+          </button>
+        </div>
+        {checkResult && (
+          <div className={`result-box ${checkResult.type === 'success' ? 'result-success' : 'result-warning'}`}>
+            {checkResult.type === 'success' ? <CheckCircle2 size={22} /> : <AlertCircle size={22} />}
+            <div>
+              <strong>{checkResult.title}</strong>
+              <span>{checkResult.text}</span>
+              <ul className="registry-check-list">
+                {checkResult.details.map((detail) => (
+                  <li key={detail}>{detail}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+        <div className="timeline-list">
+          {organization.registryEvents.map((event) => (
+            <span key={event}><CheckCircle2 size={18} /> {event}</span>
+          ))}
+        </div>
+      </section>
+    </>
+  );
+}
+
+function CompanyEmployeesPage() {
+  const { user, organization, updateCompanyEmployeeRole, addCompanyEmployee, removeCompanyEmployee } = useOutletContext();
+  const [draftRoles, setDraftRoles] = useState(() =>
+    Object.fromEntries(organization.employees.map((employee) => [employee.id, normalizeEmployeeRole(employee.role)])),
+  );
+  const [newEmployee, setNewEmployee] = useState({ email: '', role: employeeRoleOptions[1] });
+  const [openRoles, setOpenRoles] = useState(() =>
+    Object.fromEntries(employeeRoleOptions.map((role) => [
+      role,
+      organization.employees.some((employee) => normalizeEmployeeRole(employee.role) === role),
+    ])),
+  );
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    setDraftRoles(Object.fromEntries(organization.employees.map((employee) => [employee.id, normalizeEmployeeRole(employee.role)])));
+  }, [organization.employees]);
+
+  const changeDraftRole = (employeeId, role) => {
+    setSaved(false);
+    setDraftRoles((current) => ({ ...current, [employeeId]: role }));
+  };
+
+  const saveRoles = () => {
+    organization.employees.forEach((employee) => {
+      const nextRole = draftRoles[employee.id];
+      if (employee.email !== user.email && nextRole && nextRole !== employee.role) {
+        updateCompanyEmployeeRole(organization.id, employee.id, nextRole);
+      }
+    });
+    setSaved(true);
+  };
+
+  const addEmployee = (event) => {
+    event.preventDefault();
+    if (!newEmployee.email.trim()) {
+      return;
+    }
+    addCompanyEmployee(organization.id, newEmployee);
+    setNewEmployee({ email: '', role: employeeRoleOptions[1] });
+    setOpenRoles((current) => ({ ...current, [newEmployee.role]: true }));
+    setSaved(true);
+  };
+
+  const toggleRole = (role) => {
+    setOpenRoles((current) => ({ ...current, [role]: !current[role] }));
+  };
+
+  const deleteEmployee = (employee) => {
+    if (employee.email === user.email) {
+      return;
+    }
+    removeCompanyEmployee(organization.id, employee.id);
+    setSaved(true);
+  };
+
+  return (
+    <>
+      <PageTitle title="Роли и доступы">
+        Добавление сотрудника по почте и изменение ролей применяются только после сохранения.
+      </PageTitle>
+
+      <form className="work-panel employee-add-form" onSubmit={addEmployee}>
+        <h2>Добавить сотрудника</h2>
+        <label>
+          Почта
+          <input
+            type="email"
+            value={newEmployee.email}
+            onChange={(event) => setNewEmployee((current) => ({ ...current, email: event.target.value }))}
+            placeholder="employee@company.ru"
+          />
+        </label>
+        <label>
+          Роль
+          <select
+            value={newEmployee.role}
+            onChange={(event) => setNewEmployee((current) => ({ ...current, role: event.target.value }))}
+          >
+            {employeeRoleOptions.map((role) => (
+              <option key={role}>{role}</option>
+            ))}
+          </select>
+        </label>
+        <button className="wide-button" type="submit">
+          <Users size={18} />
+          Добавить
+        </button>
+      </form>
+
+      <section className="employee-role-groups">
+        {employeeRoleOptions.map((role) => {
+          const employees = organization.employees.filter((employee) => normalizeEmployeeRole(employee.role) === role);
+          const isOpen = openRoles[role] ?? false;
+
+          return (
+            <article className={`role-details ${isOpen ? 'open' : ''}`} key={role}>
+              <div className="role-summary">
+                <b className="role-count">{employees.length}</b>
+                <span>{role}</span>
+                <button
+                  aria-label={`${isOpen ? 'Свернуть' : 'Развернуть'} роль ${role}`}
+                  className="role-toggle-button"
+                  type="button"
+                  onClick={() => toggleRole(role)}
+                >
+                  <ChevronDown size={18} />
+                </button>
+              </div>
+              {isOpen && (
+                <div className="employee-role-list">
+                {employees.length === 0 ? (
+                  <div className="empty-state">Сотрудников с этой ролью пока нет</div>
+                ) : (
+                  employees.map((employee) => {
+                    const isSelf = employee.email === user.email;
+
+                    return (
+                    <article className="employee-role-card" key={employee.id}>
+                      <div className="employee-avatar">
+                        <UserCog size={22} />
+                      </div>
+                      <div>
+                        <strong>{employee.name}</strong>
+                        <span>{employee.email}</span>
+                        <small>{employee.phone || 'Телефон не указан'}</small>
+                      </div>
+                      <label>
+                        Роль
+                        <select
+                          disabled={isSelf}
+                          value={draftRoles[employee.id] ?? normalizeEmployeeRole(employee.role)}
+                          onChange={(event) => changeDraftRole(employee.id, event.target.value)}
+                        >
+                          {employeeRoleOptions.map((option) => (
+                            <option key={option}>{option}</option>
+                          ))}
+                        </select>
+                      </label>
+                      <span className={`status-chip ${employee.status === 'Активен' ? 'success' : 'warning'}`}>
+                        {employee.status}
+                      </span>
+                      <button
+                        className="ghost-button danger-action"
+                        disabled={isSelf}
+                        type="button"
+                        onClick={() => deleteEmployee(employee)}
+                      >
+                        <Trash2 size={18} />
+                        Удалить
+                      </button>
+                    </article>
+                    );
+                  })
+                )}
+                </div>
+              )}
+            </article>
+          );
+        })}
+      </section>
+
+      <div className="employee-save-row">
+        <button className="wide-button" type="button" onClick={saveRoles}>
+          <Pencil size={18} />
+          Сохранить роли
+        </button>
+        {saved && <span className="inline-success">Изменения сохранены</span>}
+      </div>
+    </>
+  );
+}
+
+function CompanyObjectsPage() {
+  const { organization, companyStats } = useOutletContext();
+  const objectTree = getObjectTree(organization);
+
+  return (
+    <>
+      <PageTitle title="Дома, помещения и лицевые счета">
+        Сводка по объектам управления, которые подгружаются из реестра.
+      </PageTitle>
+
+      <section className="stats-grid">
+        <StatCard icon={House} label="Помещений" value={companyStats.units} />
+        <StatCard icon={ReceiptText} label="Лицевых счетов" value={companyStats.accounts} />
+        <StatCard icon={Gauge} label="Приборов учета" value={companyStats.meters} />
+      </section>
+
+      <section className="object-tree">
+        {objectTree.map((city) => (
+          <details className="object-details city-details" key={city.name} open>
+            <summary>
+              <span>{city.name}</span>
+              <ObjectSummaryStats paid={city.paid} unpaid={city.unpaid} />
+              <Link className="ghost-link compact-link" to={`/company-admin/statistics?scope=city&value=${encodeURIComponent(city.name)}`}>
+                <BarChart3 size={16} />
+                Статистика
+              </Link>
+            </summary>
+            {city.districts.map((district) => (
+              <details className="object-details district-details" key={district.name}>
+                <summary>
+                  <span>{district.name}</span>
+                  <ObjectSummaryStats paid={district.paid} unpaid={district.unpaid} />
+                  <Link className="ghost-link compact-link" to={`/company-admin/statistics?scope=district&value=${encodeURIComponent(district.name)}`}>
+                    <BarChart3 size={16} />
+                    Статистика
+                  </Link>
+                </summary>
+                <div className="object-list">
+                  {district.houses.map((house) => (
+                    <article className="object-card" key={house.id}>
+                      <House size={24} />
+                      <div>
+                        <strong>{house.address}</strong>
+                        <span>{house.units} помещений, {house.accounts} лицевых счетов</span>
+                      </div>
+                      <ObjectSummaryStats paid={house.paid} unpaid={house.unpaid} />
+                      <Link className="ghost-link compact-link" to={`/company-admin/statistics?scope=house&value=${encodeURIComponent(house.address)}`}>
+                        <BarChart3 size={16} />
+                        Статистика
+                      </Link>
+                    </article>
+                  ))}
+                </div>
+              </details>
+            ))}
+          </details>
+        ))}
+      </section>
+    </>
+  );
+}
+
+function ObjectSummaryStats({ paid, unpaid }) {
+  return (
+    <span className="object-payment-stats">
+      <b>{paid}</b> оплачено
+      <b>{unpaid}</b> не оплачено
+    </span>
+  );
+}
+
+function CompanyStatisticsPage() {
+  const { store, summary, organization, companyStats } = useOutletContext();
+  const [searchParams] = useSearchParams();
+  const objectTree = getObjectTree(organization);
+  const scopeFromUrl = searchParams.get('scope') ?? 'all';
+  const valueFromUrl = searchParams.get('value') ?? 'all';
+  const [mode, setMode] = useState(scopeFromUrl === 'all' ? 'overview' : 'chart');
+  const [scope, setScope] = useState(scopeFromUrl);
+  const [selectedValue, setSelectedValue] = useState(valueFromUrl);
+  const periodOptions = getLastYearPeriodOptions();
+  const defaultPeriodKey =
+    periodOptions.some((option) => option.key === getLatestReceiptPeriodKey(store.receipts))
+      ? getLatestReceiptPeriodKey(store.receipts)
+      : periodOptions.at(-1)?.key ?? makeMonthKey(new Date().getFullYear(), new Date().getMonth());
+  const [periodKey, setPeriodKey] = useState(defaultPeriodKey);
+  const [chartType, setChartType] = useState('comparison');
+  const selectionOptions = [
+    { scope: 'all', value: 'all', label: 'Все данные' },
+    ...objectTree.flatMap((city) => [
+      { scope: 'city', value: city.name, label: `Город: ${city.name}` },
+      ...city.districts.flatMap((district) => [
+        { scope: 'district', value: district.name, label: `Район: ${district.name}` },
+        ...district.houses.map((house) => ({
+          scope: 'house',
+          value: house.address,
+          label: `Дом: ${house.address}`,
+        })),
+      ]),
+    ]),
+  ];
+  const selectedOption =
+    selectionOptions.find((option) => option.scope === scope && option.value === selectedValue) ?? selectionOptions[0];
+  const selectedStats = (() => {
+    if (selectedOption.scope === 'city') {
+      return objectTree.find((city) => city.name === selectedOption.value) ?? objectTree[0];
+    }
+    if (selectedOption.scope === 'district') {
+      return objectTree.flatMap((city) => city.districts).find((district) => district.name === selectedOption.value);
+    }
+    if (selectedOption.scope === 'house') {
+      return objectTree
+        .flatMap((city) => city.districts)
+        .flatMap((district) => district.houses)
+        .find((house) => house.address === selectedOption.value);
+    }
+    return { paid: summary.paidCount, unpaid: summary.unpaidCount };
+  })() ?? { paid: summary.paidCount, unpaid: summary.unpaidCount };
+  const byService = getReportServices().map(([code]) => {
+    const serviceReceipts = store.receipts.filter((item) => item.service === code);
+    return {
+      code,
+      paid: serviceReceipts.filter((item) => item.status === 'paid').length,
+      unpaid: serviceReceipts.filter((item) => item.status === 'unpaid').length,
+      amount: serviceReceipts.reduce((sum, item) => sum + item.amount, 0),
+    };
+  });
+  const chartMonths = getThreeMonthWindow(periodKey);
+  const receiptMonthStats = Object.fromEntries(
+    chartMonths.map((month) => {
+      const receipts = store.receipts.filter((receipt) => getReceiptPeriodKey(receipt.period) === month.key);
+
+      return [
+        month.key,
+        {
+          paid: receipts.filter((receipt) => receipt.status === 'paid').length,
+          unpaid: receipts.filter((receipt) => receipt.status === 'unpaid').length,
+        },
+      ];
+    }),
+  );
+  const monthlyData = chartMonths.map((month, index) => {
+    if (selectedOption.scope === 'all') {
+      return { ...month, ...receiptMonthStats[month.key] };
+    }
+
+    const trend = 0.88 + index * 0.06;
+
+    return {
+      ...month,
+      paid: Math.max(Math.round((selectedStats.paid ?? 0) * trend), 0),
+      unpaid: Math.max(Math.round((selectedStats.unpaid ?? 0) * (1.08 - index * 0.04)), 0),
+    };
+  });
+  const maxChartValue = Math.max(
+    ...monthlyData.map((item) => Math.max(item.paid, item.unpaid)),
+    1,
+  );
+
+  const changeSelection = (value) => {
+    const [nextScope, ...rest] = value.split(':');
+    setScope(nextScope);
+    setSelectedValue(rest.join(':'));
+    setMode(nextScope === 'all' ? 'overview' : 'chart');
+  };
+
+  return (
+    <>
+      <PageTitle title="Оплаты, долги и выгрузки">
+        Сводка для администратора {organization.legalShortName}.
+      </PageTitle>
+
+      <section className="work-panel analytics-controls">
+        <div className="mode-switch">
+          <button className={mode === 'overview' ? 'active' : ''} type="button" onClick={() => setMode('overview')}>
+            Общая статистика
+          </button>
+          <button className={mode === 'chart' ? 'active' : ''} type="button" onClick={() => setMode('chart')}>
+            График по выбору
+          </button>
+        </div>
+        <label>
+          Данные для анализа
+          <select value={`${scope}:${selectedValue}`} onChange={(event) => changeSelection(event.target.value)}>
+            {selectionOptions.map((option) => (
+              <option key={`${option.scope}:${option.value}`} value={`${option.scope}:${option.value}`}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Отчетный месяц
+          <select value={periodKey} onChange={(event) => setPeriodKey(event.target.value)}>
+            {periodOptions.map((option) => (
+              <option key={option.key} value={option.key}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Вид графика
+          <select value={chartType} onChange={(event) => setChartType(event.target.value)}>
+            <option value="comparison">Оплачено и не оплачено</option>
+            <option value="paid">Только оплаты</option>
+            <option value="unpaid">Только неоплаты</option>
+          </select>
+        </label>
+      </section>
+
+      {mode === 'overview' ? (
         <section className="stats-grid">
           <StatCard icon={CheckCircle2} label="Оплачено" value={formatMoney(summary.paidAmount)} tone="success" />
           <StatCard icon={AlertCircle} label="Не оплачено" value={formatMoney(summary.unpaidAmount)} tone="danger" />
-          <StatCard icon={ReceiptText} label="Всего квитанций" value={store.receipts.length} />
+          <StatCard icon={Users} label="Должников" value={companyStats.debtors} />
         </section>
-
-        <section className="employee-grid">
-          <div className="work-panel">
-            <h2>Сводка</h2>
-            <dl className="detail-list compact">
-              <div>
-                <dt>Оплаченных квитанций</dt>
-                <dd>{summary.paidCount}</dd>
-              </div>
-              <div>
-                <dt>Неоплаченных квитанций</dt>
-                <dd>{summary.unpaidCount}</dd>
-              </div>
-              <div>
-                <dt>Сотрудник</dt>
-                <dd>{user.name}</dd>
-              </div>
-            </dl>
+      ) : (
+        <section className="work-panel chart-panel">
+          <div className="panel-heading-row">
+            <h2>{selectedOption.label}</h2>
+            <span className="chart-period-note">Последние 3 месяца до выбранного периода</span>
           </div>
-
-          <div className="work-panel">
-            <h2>Услуги</h2>
-            <div className="service-table">
-              {byService.map((item) => (
-                <div key={item.code}>
-                  <ServiceBadge service={item.code} />
-                  <span>{formatMoney(item.amount)}</span>
-                  <strong>{item.unpaid} долг.</strong>
+          <div className={`period-chart ${chartType}`}>
+            {monthlyData.map((item) => (
+              <article className="period-chart-column" key={item.key}>
+                <div className="period-bars">
+                  {chartType !== 'unpaid' && (
+                    <span
+                      className="period-bar paid-bar"
+                      style={{ height: `${Math.max((item.paid / maxChartValue) * 100, item.paid ? 8 : 0)}%` }}
+                    />
+                  )}
+                  {chartType !== 'paid' && (
+                    <span
+                      className="period-bar unpaid-bar"
+                      style={{ height: `${Math.max((item.unpaid / maxChartValue) * 100, item.unpaid ? 8 : 0)}%` }}
+                    />
+                  )}
                 </div>
-              ))}
-            </div>
+                <strong>{item.label}</strong>
+                <span>{item.paid} оплачено</span>
+                <span>{item.unpaid} не оплачено</span>
+              </article>
+            ))}
           </div>
         </section>
-        <ProjectFooter />
-      </main>
-    </div>
+      )}
+
+      <section className="employee-grid">
+        <div className="work-panel">
+          <h2>По услугам</h2>
+          <div className="service-table">
+            {byService.map((item) => (
+              <div key={item.code}>
+                <ServiceBadge service={item.code} />
+                <span>{formatMoney(item.amount)}</span>
+                <strong>{item.unpaid} не оплачено</strong>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="work-panel">
+          <h2>Выгрузки</h2>
+          <div className="export-actions">
+            <button className="ghost-button" type="button">
+              <Download size={18} />
+              Реестр должников
+            </button>
+            <button className="ghost-button" type="button">
+              <FileSpreadsheet size={18} />
+              Отчет по оплатам
+            </button>
+            <button className="ghost-button" type="button">
+              <ClipboardList size={18} />
+              Сводка заявок
+            </button>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }
 
 export default function App() {
   const [store, setStore] = useState(loadStore);
   const [session, setSession] = useState(loadSession);
+  const [theme, setTheme] = useState(loadTheme);
 
   useEffect(() => {
     localStorage.setItem(STORE_KEY, JSON.stringify(store));
@@ -1506,6 +3035,11 @@ export default function App() {
       localStorage.removeItem(SESSION_KEY);
     }
   }, [session]);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem(THEME_KEY, theme);
+  }, [theme]);
 
   const currentUser = useMemo(
     () => store.users.find((item) => item.id === session?.userId) ?? null,
@@ -1564,6 +3098,35 @@ export default function App() {
     return { ok: true };
   };
 
+  const approvePartnerApplication = (application) => {
+    const orgId = application.id ?? `org-${Date.now()}`;
+    const adminId = `company-admin-${Date.now()}`;
+    const organization = buildCompanyFromApplication(application, orgId);
+    const adminUser = {
+      id: adminId,
+      role: 'companyAdmin',
+      orgId,
+      name: application.ownerName || 'Администратор компании',
+      email: application.ownerEmail || 'owner@company.ru',
+      password: 'demo',
+      phone: application.ownerPhone || '',
+    };
+
+    setStore((current) => ({
+      ...current,
+      organizations: [
+        ...(current.organizations ?? []).filter((item) => item.id !== orgId),
+        organization,
+      ],
+      users: [
+        ...current.users.filter((item) => item.email !== adminUser.email || item.role !== 'companyAdmin'),
+        adminUser,
+      ],
+    }));
+    setSession({ userId: adminId, role: 'companyAdmin' });
+    return { ok: true, orgId };
+  };
+
   const logout = () => setSession(null);
 
   const updateProfile = (patch) => {
@@ -1575,6 +3138,65 @@ export default function App() {
       ...current,
       users: current.users.map((item) =>
         item.id === currentUser.id ? { ...item, ...patch } : item,
+      ),
+    }));
+  };
+
+  const updateCompanyEmployeeRole = (orgId, employeeId, role) => {
+    setStore((current) => ({
+      ...current,
+      organizations: getOrganizations(current).map((organization) =>
+        organization.id === orgId
+          ? {
+              ...organization,
+              employees: organization.employees.map((employee) =>
+                employee.id === employeeId ? { ...employee, role } : employee,
+              ),
+            }
+          : organization,
+      ),
+    }));
+  };
+
+  const addCompanyEmployee = (orgId, employee) => {
+    const email = employee.email.trim();
+    if (!email) {
+      return;
+    }
+
+    setStore((current) => ({
+      ...current,
+      organizations: getOrganizations(current).map((organization) =>
+        organization.id === orgId
+          ? {
+              ...organization,
+              employees: [
+                ...organization.employees,
+                {
+                  id: `staff-${Date.now()}`,
+                  name: email.split('@')[0],
+                  email,
+                  phone: '',
+                  role: employee.role,
+                  status: 'Ожидает приглашение',
+                },
+              ],
+            }
+          : organization,
+      ),
+    }));
+  };
+
+  const removeCompanyEmployee = (orgId, employeeId) => {
+    setStore((current) => ({
+      ...current,
+      organizations: getOrganizations(current).map((organization) =>
+        organization.id === orgId
+          ? {
+              ...organization,
+              employees: organization.employees.filter((employee) => employee.id !== employeeId),
+            }
+          : organization,
       ),
     }));
   };
@@ -1609,7 +3231,16 @@ export default function App() {
       <Route path="/" element={<HomePage store={store} user={currentUser} onLogout={logout} />} />
       <Route path="/about" element={<InfoPage user={currentUser} onLogout={logout} />} />
       <Route path="/privacy" element={<PrivacyPage user={currentUser} onLogout={logout} />} />
-      <Route path="/partner" element={<PartnerPage user={currentUser} onLogout={logout} />} />
+      <Route
+        path="/partner"
+        element={
+          <PartnerPage
+            user={currentUser}
+            onLogout={logout}
+            approvePartnerApplication={approvePartnerApplication}
+          />
+        }
+      />
       <Route
         path="/auth"
         element={
@@ -1631,6 +3262,8 @@ export default function App() {
               logout={logout}
               updateProfile={updateProfile}
               payReceipt={payReceipt}
+              theme={theme}
+              setTheme={setTheme}
             />
           </RequireRole>
         }
@@ -1641,15 +3274,51 @@ export default function App() {
         <Route path="pay" element={<PaymentPage />} />
         <Route path="pay/:receiptId" element={<PaymentPage />} />
         <Route path="profile" element={<ProfilePage />} />
+        <Route path="settings" element={<SettingsPage scope="кабинета плательщика" />} />
       </Route>
       <Route
         path="/employee"
         element={
           <RequireRole user={currentUser} role="employee">
-            <EmployeePage user={currentUser} store={store} logout={logout} />
+            <EmployeeLayout
+              user={currentUser}
+              store={store}
+              logout={logout}
+              updateProfile={updateProfile}
+              theme={theme}
+              setTheme={setTheme}
+            />
           </RequireRole>
         }
-      />
+      >
+        <Route index element={<EmployeeDashboard />} />
+        <Route path="settings" element={<SettingsPage scope="служебного кабинета" />} />
+      </Route>
+      <Route
+        path="/company-admin"
+        element={
+          <RequireRole user={currentUser} role="companyAdmin">
+            <CompanyAdminLayout
+              user={currentUser}
+              store={store}
+              logout={logout}
+              updateProfile={updateProfile}
+              theme={theme}
+              setTheme={setTheme}
+              updateCompanyEmployeeRole={updateCompanyEmployeeRole}
+              addCompanyEmployee={addCompanyEmployee}
+              removeCompanyEmployee={removeCompanyEmployee}
+            />
+          </RequireRole>
+        }
+      >
+        <Route index element={<CompanyAdminDashboard />} />
+        <Route path="company" element={<CompanyRegistryPage />} />
+        <Route path="employees" element={<CompanyEmployeesPage />} />
+        <Route path="objects" element={<CompanyObjectsPage />} />
+        <Route path="statistics" element={<CompanyStatisticsPage />} />
+        <Route path="settings" element={<SettingsPage scope="кабинета администратора компании" />} />
+      </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
