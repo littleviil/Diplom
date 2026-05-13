@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, NavLink, Outlet, useOutletContext } from 'react-router-dom';
 import {
   AlertCircle,
@@ -20,8 +20,165 @@ import {
 } from '../utils.js';
 import { PageTitle, ServiceBadge, StatCard, WorkspaceTopbar } from '../components/shared.jsx';
 
+const dispatcherStatusOptions = ['Новое', 'В работе', 'Выполнено'];
+
+const dispatcherTypeOptions = [
+  'Ошибка в квитанции',
+  'Детализация счета',
+  'Не отображается оплата',
+  'Передача показаний',
+  'Перерасчет начислений',
+  'Вопрос по сроку оплаты',
+  'Качество услуги',
+  'Другой вопрос',
+];
+
+const initialDispatcherTickets = [
+  {
+    id: 'ticket-1',
+    topic: 'Не отображается оплата за водоснабжение',
+    type: 'Не отображается оплата',
+    service: 'water',
+    period: 'Май 2026',
+    amount: 4523.67,
+    dueDate: '10.06.2026',
+    account: '407900000001',
+    resident: 'Ирина Волкова',
+    status: 'Новое',
+    priority: 'Высокий',
+    message: 'Оплата прошла через СБП вчера вечером, но в кабинете квитанция до сих пор отмечена как неоплаченная.',
+    answer: '',
+    answered: false,
+  },
+  {
+    id: 'ticket-2',
+    topic: 'Нужна детализация начисления по электроснабжению',
+    type: 'Детализация счета',
+    service: 'electricity',
+    period: 'Май 2026',
+    amount: 1367.4,
+    dueDate: '10.06.2026',
+    account: '407900000002',
+    resident: 'Демо-абонент',
+    status: 'В работе',
+    priority: 'Средний',
+    message: 'Пользователь просит объяснить разницу между дневным и ночным тарифом за последний период.',
+    answer: 'Проверяем начисления по прибору учета и тарифным зонам.',
+    answered: true,
+  },
+  {
+    id: 'ticket-3',
+    topic: 'Ошибка в периоде квитанции',
+    type: 'Ошибка в квитанции',
+    service: 'water',
+    period: 'Апрель 2026',
+    amount: 1580,
+    dueDate: '10.05.2026',
+    account: '407900000001',
+    resident: 'Ирина Волкова',
+    status: 'Выполнено',
+    priority: 'Обычный',
+    message: 'В истории платежей отображался март вместо апреля.',
+    answer: 'Период исправлен, квитанция отображается корректно.',
+    answered: true,
+  },
+  {
+    id: 'ticket-4',
+    topic: 'Не принимаются показания счетчика газоснабжения',
+    type: 'Передача показаний',
+    service: 'gas',
+    period: 'Май 2026',
+    amount: 1190.64,
+    dueDate: '10.06.2026',
+    account: '407900000001',
+    resident: 'Ирина Волкова',
+    status: 'Новое',
+    priority: 'Средний',
+    message: 'Показания выше предыдущих, но форма пишет, что данные некорректны.',
+    answer: '',
+    answered: false,
+  },
+  {
+    id: 'ticket-5',
+    topic: 'Запрос перерасчета начислений за водоснабжение',
+    type: 'Перерасчет начислений',
+    service: 'water',
+    period: 'Май 2026',
+    amount: 4523.67,
+    dueDate: '10.06.2026',
+    account: '407900000001',
+    resident: 'Ирина Волкова',
+    status: 'В работе',
+    priority: 'Высокий',
+    message: 'Пользователь считает, что расход горячей воды рассчитан по неверному объему.',
+    answer: 'Запрошены контрольные показания и история начислений за предыдущий месяц.',
+    answered: true,
+  },
+  {
+    id: 'ticket-6',
+    topic: 'Уточнение срока оплаты квитанции',
+    type: 'Вопрос по сроку оплаты',
+    service: 'electricity',
+    period: 'Май 2026',
+    amount: 1367.4,
+    dueDate: '10.06.2026',
+    account: '407900000002',
+    resident: 'Демо-абонент',
+    status: 'Новое',
+    priority: 'Обычный',
+    message: 'Нужно уточнить, до какого числа можно оплатить без начисления пени.',
+    answer: '',
+    answered: false,
+  },
+  {
+    id: 'ticket-7',
+    topic: 'Жалоба на качество водоснабжения',
+    type: 'Качество услуги',
+    service: 'water',
+    period: 'Май 2026',
+    amount: 4523.67,
+    dueDate: '10.06.2026',
+    account: '407900000001',
+    resident: 'Ирина Волкова',
+    status: 'В работе',
+    priority: 'Высокий',
+    message: 'Пользователь сообщает о слабом напоре и просит проверить начисления за период.',
+    answer: 'Заявка передана в техническую службу, начисления будут сверены после проверки.',
+    answered: true,
+  },
+  {
+    id: 'ticket-8',
+    topic: 'Нужна справка по истории оплат',
+    type: 'Другой вопрос',
+    service: 'gas',
+    period: 'Апрель 2026',
+    amount: 980,
+    dueDate: '10.05.2026',
+    account: '407900000001',
+    resident: 'Ирина Волкова',
+    status: 'Выполнено',
+    priority: 'Обычный',
+    message: 'Пользователь просит подсказать, где увидеть оплаты за последние месяцы.',
+    answer: 'Историю оплат можно открыть в кабинете плательщика через кнопку "Посмотреть историю платежей".',
+    answered: true,
+  },
+];
+
+const getTicketStatusTone = (status) => {
+  if (status === 'Новое') {
+    return 'warning';
+  }
+
+  if (status === 'Выполнено') {
+    return 'success';
+  }
+
+  return '';
+};
+
 export function EmployeeLayout({ user, store, logout, updateProfile, theme, setTheme }) {
   const summary = buildReceiptSummary(store.receipts);
+  const showRequests = user.employeeRole !== 'Бухгалтер';
 
   return (
     <div className="app-shell">
@@ -32,7 +189,7 @@ export function EmployeeLayout({ user, store, logout, updateProfile, theme, setT
           </span>
           <span>
             <strong>ЖКУ Контроль</strong>
-            <small>{user.employeeRole ?? 'сотрудник ЖКУ'}</small>
+            <small>{user.employeeRole ?? 'Диспетчер'}</small>
           </span>
         </Link>
 
@@ -41,6 +198,12 @@ export function EmployeeLayout({ user, store, logout, updateProfile, theme, setT
             <LayoutDashboard size={18} />
             Главное
           </NavLink>
+          {showRequests && (
+            <NavLink to="/employee/requests">
+              <MessageSquare size={18} />
+              Заявки
+            </NavLink>
+          )}
           <NavLink to="/employee/settings">
             <Settings size={18} />
             Настройки
@@ -74,32 +237,7 @@ export function EmployeeDashboard() {
 }
 
 export function DispatcherDashboard({ user, store, summary }) {
-  const tickets = [
-    {
-      id: 'ticket-1',
-      topic: 'Не отображается оплата за воду',
-      account: '407900000001',
-      resident: 'Ирина Волкова',
-      status: 'Новый',
-      priority: 'Высокий',
-    },
-    {
-      id: 'ticket-2',
-      topic: 'Нужна детализация начисления по электричеству',
-      account: '407900000002',
-      resident: 'Демо-абонент',
-      status: 'В работе',
-      priority: 'Средний',
-    },
-    {
-      id: 'ticket-3',
-      topic: 'Ошибка в периоде квитанции',
-      account: '407900000001',
-      resident: 'Ирина Волкова',
-      status: 'Ожидает ответа',
-      priority: 'Обычный',
-    },
-  ];
+  const tickets = initialDispatcherTickets;
   const disputedReceipts = store.receipts
     .filter((receipt) => receipt.status === 'unpaid')
     .slice(0, 5)
@@ -115,7 +253,7 @@ export function DispatcherDashboard({ user, store, summary }) {
       </PageTitle>
 
       <section className="stats-grid">
-        <StatCard icon={MessageSquare} label="Новых обращений" value={tickets.filter((item) => item.status === 'Новый').length} />
+        <StatCard icon={MessageSquare} label="Новых заявок" value={tickets.filter((item) => item.status === 'Новое').length} />
         <StatCard icon={AlertCircle} label="Спорных квитанций" value={disputedReceipts.length} tone="danger" />
         <StatCard icon={ReceiptText} label="Не оплачено" value={summary.unpaidCount} />
       </section>
@@ -130,7 +268,7 @@ export function DispatcherDashboard({ user, store, summary }) {
                   <strong>{ticket.topic}</strong>
                   <span>{ticket.resident}, лицевой счет {ticket.account}</span>
                 </div>
-                <span className={`status-chip ${ticket.status === 'Новый' ? 'warning' : 'success'}`}>
+                <span className={`status-chip ${getTicketStatusTone(ticket.status)}`}>
                   {ticket.status}
                 </span>
                 <small>{ticket.priority}</small>
@@ -168,6 +306,188 @@ export function DispatcherDashboard({ user, store, summary }) {
             </article>
           );
         })}
+      </section>
+    </>
+  );
+}
+
+export function EmployeeRequestsPage() {
+  const { user } = useOutletContext();
+  const [tickets, setTickets] = useState(initialDispatcherTickets);
+  const [typeFilter, setTypeFilter] = useState('Все типы');
+  const [statusFilter, setStatusFilter] = useState('Все статусы');
+  const [selectedTicketId, setSelectedTicketId] = useState(initialDispatcherTickets[0]?.id ?? null);
+  const employeeRole = user.employeeRole ?? (user.email.includes('accountant') ? 'Бухгалтер' : 'Диспетчер');
+  const filteredTickets = tickets.filter((ticket) => {
+    const matchesType = typeFilter === 'Все типы' || ticket.type === typeFilter;
+    const matchesStatus = statusFilter === 'Все статусы' || ticket.status === statusFilter;
+
+    return matchesType && matchesStatus;
+  });
+  const selectedTicket =
+    filteredTickets.find((ticket) => ticket.id === selectedTicketId) ??
+    filteredTickets[0] ??
+    null;
+
+  const updateTicketStatus = (ticketId, status) => {
+    setTickets((current) => current.map((ticket) => (ticket.id === ticketId ? { ...ticket, status } : ticket)));
+  };
+  const updateTicketAnswer = (ticketId, answer) => {
+    setTickets((current) => current.map((ticket) => (ticket.id === ticketId ? { ...ticket, answer, answered: false } : ticket)));
+  };
+  const saveTicketAnswer = (ticketId) => {
+    setTickets((current) =>
+      current.map((ticket) =>
+        ticket.id === ticketId ? { ...ticket, answered: ticket.answer.trim().length > 0 } : ticket,
+      ),
+    );
+  };
+
+  if (employeeRole === 'Бухгалтер') {
+    return (
+      <PageTitle title="Заявки пользователей">
+        Этот раздел доступен диспетчеру. Для бухгалтера заявки скрыты.
+      </PageTitle>
+    );
+  }
+
+  return (
+    <>
+      <PageTitle title="Заявки пользователей">
+        Ответы пользователям и смена статуса заявки: Новое, В работе или Выполнено.
+      </PageTitle>
+
+      <section className="stats-grid">
+        <StatCard icon={MessageSquare} label="Новое" value={tickets.filter((item) => item.status === 'Новое').length} />
+        <StatCard icon={AlertCircle} label="В работе" value={tickets.filter((item) => item.status === 'В работе').length} />
+        <StatCard icon={CheckCircle2} label="Выполнено" value={tickets.filter((item) => item.status === 'Выполнено').length} tone="success" />
+      </section>
+
+      <section className="request-workspace">
+        <div className="work-panel request-list-panel">
+          <div className="request-list-headline">
+            <h2>Общий список заявок</h2>
+            <span>{filteredTickets.length} из {tickets.length}</span>
+          </div>
+          <div className="request-filters">
+            <label>
+              Тип заявки
+              <select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)}>
+                <option>Все типы</option>
+                {dispatcherTypeOptions.map((type) => (
+                  <option key={type}>{type}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Статус
+              <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
+                <option>Все статусы</option>
+                {dispatcherStatusOptions.map((status) => (
+                  <option key={status}>{status}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <div className="request-list">
+            {filteredTickets.length > 0 ? (
+              filteredTickets.map((ticket) => (
+                <button
+                  className={`request-list-item ${selectedTicket?.id === ticket.id ? 'active' : ''}`}
+                  key={ticket.id}
+                  type="button"
+                  onClick={() => setSelectedTicketId(ticket.id)}
+                >
+                  <span className="request-list-item-head">
+                    <strong>{ticket.topic}</strong>
+                    <span className={`status-chip ${getTicketStatusTone(ticket.status)}`}>
+                      {ticket.status}
+                    </span>
+                  </span>
+                  <span>{ticket.type}</span>
+                  <small>{ticket.resident} · {ticket.period} · лицевой счет {ticket.account}</small>
+                </button>
+              ))
+            ) : (
+              <div className="empty-state">По выбранным фильтрам заявок нет.</div>
+            )}
+          </div>
+        </div>
+
+        <aside className="work-panel request-detail-panel">
+          {selectedTicket ? (
+            <>
+              <div className="request-detail-head">
+                <span className="section-kicker">{selectedTicket.type}</span>
+                <h2>{selectedTicket.topic}</h2>
+                <span className={`status-chip ${getTicketStatusTone(selectedTicket.status)}`}>
+                  {selectedTicket.status}
+                </span>
+              </div>
+
+              <div className="request-detail-meta">
+                <div>
+                  <span>Плательщик</span>
+                  <strong>{selectedTicket.resident}</strong>
+                </div>
+                <div>
+                  <span>Лицевой счет</span>
+                  <strong>{selectedTicket.account}</strong>
+                </div>
+                <div>
+                  <span>Услуга</span>
+                  <ServiceBadge service={selectedTicket.service} />
+                </div>
+                <div>
+                  <span>Период</span>
+                  <strong>{selectedTicket.period}</strong>
+                </div>
+                <div>
+                  <span>Сумма квитанции</span>
+                  <strong>{formatMoney(selectedTicket.amount)}</strong>
+                </div>
+                <div>
+                  <span>Срок оплаты</span>
+                  <strong>{selectedTicket.dueDate}</strong>
+                </div>
+              </div>
+
+              <div className="request-message-box">
+                <span>Сообщение пользователя</span>
+                <p>{selectedTicket.message}</p>
+              </div>
+
+              <label>
+                Ответ диспетчера
+                <textarea
+                  value={selectedTicket.answer}
+                  onChange={(event) => updateTicketAnswer(selectedTicket.id, event.target.value)}
+                  placeholder="Напишите ответ пользователю"
+                />
+              </label>
+
+              <div className="ticket-controls request-detail-actions">
+                <label>
+                  Статус заявки
+                  <select value={selectedTicket.status} onChange={(event) => updateTicketStatus(selectedTicket.id, event.target.value)}>
+                    {dispatcherStatusOptions.map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <button className="primary-link" type="button" onClick={() => saveTicketAnswer(selectedTicket.id)}>
+                  Ответить
+                </button>
+              </div>
+
+              {selectedTicket.answered && <div className="inline-success">Ответ сохранен для пользователя.</div>}
+            </>
+          ) : (
+            <div className="empty-state">Выберите заявку из списка слева.</div>
+          )}
+        </aside>
       </section>
     </>
   );

@@ -4,7 +4,7 @@ import { SESSION_KEY, STORE_KEY, THEME_KEY } from './config.js';
 import { AuthPage, HomePage, InfoPage, PartnerPage, PrivacyPage } from './pages/PublicPages.jsx';
 import { ErrorBoundary, RequireRole, SettingsPage } from './components/shared.jsx';
 import { PayerDashboard, PayerLayout, PaymentPage, ProfilePage, ReceiptDetailPage, ReceiptsPage } from './features/payer.jsx';
-import { EmployeeDashboard, EmployeeLayout } from './features/employee.jsx';
+import { EmployeeDashboard, EmployeeLayout, EmployeeRequestsPage } from './features/employee.jsx';
 import { CompanyAdminDashboard, CompanyAdminLayout, CompanyEmployeesPage, CompanyObjectsPage, CompanyRegistryPage, CompanyStatisticsPage } from './features/companyAdmin.jsx';
 import { buildCompanyFromApplication, getOrganizations, loadSession, loadStore, loadTheme, today } from './utils.js';
 
@@ -282,6 +282,7 @@ export default function App() {
         }
       >
         <Route index element={<EmployeeDashboard />} />
+        <Route path="requests" element={<EmployeeRequestsPage />} />
         <Route path="settings" element={<SettingsPage scope="служебного кабинета" />} />
       </Route>
       <Route

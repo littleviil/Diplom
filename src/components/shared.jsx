@@ -10,7 +10,6 @@ import {
   LogIn,
   LogOut,
   Moon,
-  Pencil,
   ReceiptText,
   Settings,
   Sun,
@@ -279,29 +278,13 @@ export function StatCard({ icon: Icon, label, value, tone }) {
 }
 
 export function SettingsPage({ scope = 'личного кабинета' }) {
-  const { user, theme, setTheme, updateProfile } = useOutletContext();
-  const [form, setForm] = useState({
-    name: user.name,
-    email: user.email,
-    phone: user.phone ?? '',
-  });
+  const { theme, setTheme } = useOutletContext();
   const [saved, setSaved] = useState(false);
-
-  const update = (field, value) => {
-    setSaved(false);
-    setForm((current) => ({ ...current, [field]: value }));
-  };
-
-  const submitAccount = (event) => {
-    event.preventDefault();
-    updateProfile?.(form);
-    setSaved(true);
-  };
 
   return (
     <>
       <PageTitle title="Параметры кабинета">
-        Настройка внешнего вида, уведомлений и данных аккаунта {scope}.
+        Настройка внешнего вида и уведомлений {scope}.
       </PageTitle>
 
       <section className="settings-grid">
@@ -330,26 +313,6 @@ export function SettingsPage({ scope = 'личного кабинета' }) {
           </div>
         </div>
 
-        <form className="work-panel account-settings-form" onSubmit={submitAccount}>
-          <h2>Аккаунт</h2>
-          <label>
-            Имя
-            <input value={form.name} onChange={(event) => update('name', event.target.value)} />
-          </label>
-          <label>
-            Почта
-            <input type="email" value={form.email} onChange={(event) => update('email', event.target.value)} />
-          </label>
-          <label>
-            Телефон
-            <input value={form.phone} onChange={(event) => update('phone', event.target.value)} />
-          </label>
-          <span className="form-hint">Изменения применятся только после сохранения.</span>
-          <button className="wide-button" type="submit">
-            <Pencil size={18} />
-            Сохранить
-          </button>
-        </form>
       </section>
       {saved && <div className="inline-success settings-saved">Изменения сохранены</div>}
     </>

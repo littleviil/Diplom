@@ -17,7 +17,7 @@ export const formatMoney = (value) =>
   new Intl.NumberFormat('ru-RU', {
     style: 'currency',
     currency: 'RUB',
-    maximumFractionDigits: 0,
+    maximumFractionDigits: 2,
   }).format(value);
 
 export const today = () => new Date().toISOString().slice(0, 10);
@@ -42,7 +42,29 @@ export function buildDemoReceipt(id, [periodKey, accountId, service, amount, sta
 }
 
 export function ensureDemoData(store) {
-  const nextUsers = [...(store.users ?? [])];
+  const nextUsers = (store.users ?? []).filter((user) => !(user.role === 'employee' && user.email === 'employee@demo.ru'));
+  const normalizeRequestStatus = (status) => {
+    if (status === 'Новая' || status === 'Новый') {
+      return 'Новое';
+    }
+
+    if (status === 'Закрыта' || status === 'Закрыто' || status === 'Ожидает ответа') {
+      return status === 'Ожидает ответа' ? 'В работе' : 'Выполнено';
+    }
+
+    return status;
+  };
+  const nextOrganizations = (store.organizations ?? []).map((organization) => ({
+    ...organization,
+    employees: (organization.employees ?? [])
+      .filter((employee) => employee.email !== 'master@comfort-dom.ru')
+      .filter((employee) => employeeRoleOptions.includes(employee.role)),
+    requests: (organization.requests ?? []).map((request) => ({
+      ...request,
+      status: normalizeRequestStatus(request.status),
+    })),
+  }));
+
   demoEmployeeAccounts.forEach((account) => {
     const existing = nextUsers.find((user) => user.email === account.email && user.role === 'employee');
     if (existing) {
@@ -68,13 +90,19 @@ export function ensureDemoData(store) {
   demoReceiptSeed.forEach((seed, index) => {
     const [periodKey, accountId, service] = seed;
     const receiptId = `demo-rcp-${periodKey}-${accountId}-${service}`;
-    if (!nextReceipts.some((receipt) => receipt.id === receiptId)) {
-      nextReceipts.push(buildDemoReceipt(receiptId, seed));
+    const demoReceipt = buildDemoReceipt(receiptId, seed);
+    const existingReceipt = nextReceipts.find((receipt) => receipt.id === receiptId);
+    if (existingReceipt) {
+      Object.assign(existingReceipt, demoReceipt);
+    } else {
+      nextReceipts.push(demoReceipt);
     }
   });
+  const visibleReceipts = nextReceipts.filter((receipt) => isReportService(receipt.service));
+  const visibleReceiptIds = new Set(visibleReceipts.map((receipt) => receipt.id));
 
   const nextPayments = [...(store.payments ?? [])];
-  nextReceipts
+  visibleReceipts
     .filter((receipt) => receipt.id.startsWith('demo-rcp-') && receipt.status === 'paid')
     .forEach((receipt) => {
       const paymentId = `pay-${receipt.id}`;
@@ -92,8 +120,9 @@ export function ensureDemoData(store) {
   return {
     ...store,
     users: nextUsers,
-    receipts: nextReceipts,
-    payments: nextPayments,
+    organizations: nextOrganizations,
+    receipts: visibleReceipts,
+    payments: nextPayments.filter((payment) => visibleReceiptIds.has(payment.receiptId)),
   };
 }
 
@@ -124,15 +153,16 @@ export function loadTheme() {
 }
 
 export function buildReceiptSummary(receipts) {
-  const paid = receipts.filter((item) => item.status === 'paid');
-  const unpaid = receipts.filter((item) => item.status === 'unpaid');
+  const visibleReceipts = filterReportReceipts(receipts);
+  const paid = visibleReceipts.filter((item) => item.status === 'paid');
+  const unpaid = visibleReceipts.filter((item) => item.status === 'unpaid');
 
   return {
     paidCount: paid.length,
     unpaidCount: unpaid.length,
     paidAmount: paid.reduce((sum, item) => sum + item.amount, 0),
     unpaidAmount: unpaid.reduce((sum, item) => sum + item.amount, 0),
-    totalAmount: receipts.reduce((sum, item) => sum + item.amount, 0),
+    totalAmount: visibleReceipts.reduce((sum, item) => sum + item.amount, 0),
   };
 }
 
@@ -144,6 +174,14 @@ export function getReportServices() {
   return reportServiceCodes
     .filter((code) => serviceMeta[code])
     .map((code) => [code, serviceMeta[code]]);
+}
+
+export function isReportService(service) {
+  return reportServiceCodes.includes(service);
+}
+
+export function filterReportReceipts(receipts) {
+  return receipts.filter((receipt) => isReportService(receipt.service));
 }
 
 export function normalizeEmployeeRole(role) {

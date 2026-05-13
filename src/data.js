@@ -1,9 +1,7 @@
 export const serviceMeta = {
-  water: { name: 'Вода', accent: 'cyan' },
-  gas: { name: 'Газ', accent: 'amber' },
-  electricity: { name: 'Электричество', accent: 'yellow' },
-  heating: { name: 'Отопление', accent: 'rose' },
-  maintenance: { name: 'Содержание жилья', accent: 'blue' },
+  water: { name: 'Водоснабжение', accent: 'cyan' },
+  gas: { name: 'Газоснабжение', accent: 'gas' },
+  electricity: { name: 'Электроснабжение', accent: 'yellow' },
 };
 
 export const initialStore = {
@@ -18,12 +16,14 @@ export const initialStore = {
       accountId: 'acc-1',
     },
     {
-      id: 'employee-1',
+      id: 'employee-dispatcher',
       role: 'employee',
-      name: 'Антон Соколов',
-      email: 'employee@demo.ru',
+      name: 'Анна Сергеева',
+      email: 'dispatcher@demo.ru',
       password: 'demo',
-      position: 'Специалист абонентского отдела',
+      loginName: 'dispatcher',
+      employeeRole: 'Диспетчер',
+      position: 'Диспетчер абонентской службы',
     },
   ],
   accounts: [
@@ -78,8 +78,8 @@ export const initialStore = {
       id: 'rcp-4',
       accountId: 'acc-1',
       period: 'Март 2026',
-      service: 'maintenance',
-      amount: 4180,
+      service: 'electricity',
+      amount: 2480,
       status: 'unpaid',
       dueDate: '2026-04-10',
       paidAt: null,

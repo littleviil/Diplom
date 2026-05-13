@@ -95,7 +95,7 @@ export function HomePage({ store, user, onLogout }) {
           <p>
             Личный кабинет помогает жителям контролировать начисления, оплачивать
             квитанции и быстро понимать, остались ли неоплаченные периоды. Для
-            сотрудников ЖКУ предусмотрен отдельный вход со статистикой оплат.
+            диспетчера и бухгалтера предусмотрены отдельные рабочие кабинеты.
           </p>
           <div className="hero-actions">
             <Link to="/auth" className="primary-link">
@@ -104,7 +104,7 @@ export function HomePage({ store, user, onLogout }) {
             </Link>
             <Link to="/auth?role=employee" className="primary-link secondary-action">
               <BarChart3 size={18} />
-              Войти сотруднику
+              Войти диспетчеру/бухгалтеру
             </Link>
           </div>
         </section>
@@ -121,14 +121,14 @@ export function HomePage({ store, user, onLogout }) {
               type="button"
               onClick={() => setActiveAudience('citizen')}
             >
-              Гражданин плательщик
+              Плательщик
             </button>
             <button
               className={activeAudience === 'employee' ? 'active' : ''}
               type="button"
               onClick={() => setActiveAudience('employee')}
             >
-              Сотрудник ЖКУ
+              Диспетчер и бухгалтер
             </button>
           </div>
 
@@ -247,7 +247,7 @@ export function InfoPage({ user, onLogout }) {
           <p>
             В проекте есть публичная проверка задолженности по лицевому счету, личный
             кабинет плательщика, электронные квитанции, имитация оплаты через МИР и СБП,
-            а также служебный кабинет сотрудника ЖКУ с базовой статистикой оплат.
+            а также кабинеты администратора компании, диспетчера и бухгалтера.
           </p>
           <Link to="/" className="primary-link">Вернуться на главную</Link>
         </section>
@@ -272,7 +272,7 @@ export function PrivacyPage({ user, onLogout }) {
           </p>
           <p>
             Без авторизации сервис не раскрывает ФИО, адрес и другие персональные данные.
-            Доступ к личному кабинету плательщика и служебному кабинету сотрудника
+            Доступ к личному кабинету плательщика и рабочим кабинетам компании
             разделяется по ролям.
           </p>
           <Link to="/" className="primary-link">Вернуться на главную</Link>
@@ -564,8 +564,8 @@ export function AuthPage({ user, login, registerPayer, onLogout }) {
     setMode('login');
     setForm((current) => ({
       ...current,
-      loginName: 'employee',
-      email: 'employee@demo.ru',
+      loginName: 'dispatcher',
+      email: 'dispatcher@demo.ru',
       password: 'demo',
       company: 'УК Комфортный дом',
     }));
@@ -638,8 +638,8 @@ export function AuthPage({ user, login, registerPayer, onLogout }) {
             {role === 'companyAdmin'
               ? 'Вход администратора компании'
               : role === 'employee'
-                ? 'Вход сотрудника ЖКУ'
-                : 'Вход гражданина плательщика'}
+                ? 'Вход диспетчера или бухгалтера'
+                : 'Вход плательщика'}
           </h1>
           <p>
             {role !== 'payer'
@@ -648,7 +648,7 @@ export function AuthPage({ user, login, registerPayer, onLogout }) {
           </p>
           {role === 'employee' && (
             <div className="demo-login-panel">
-              <span>Быстрый вход сотрудника</span>
+              <span>Быстрый вход в кабинет компании</span>
               <div className="demo-login-buttons">
                 {demoEmployeeAccounts.map((account) => (
                   <button
@@ -681,10 +681,10 @@ export function AuthPage({ user, login, registerPayer, onLogout }) {
                 </label>
                 <label className={fieldClass('email')}>
                   Почта
-                  <input
+                    <input
                     value={form.email}
                     onChange={(event) => update('email', event.target.value)}
-                    placeholder={role === 'companyAdmin' ? 'owner@comfort-dom.ru' : role === 'employee' ? 'employee@demo.ru' : 'payer@demo.ru'}
+                    placeholder={role === 'companyAdmin' ? 'owner@comfort-dom.ru' : role === 'employee' ? 'dispatcher@demo.ru' : 'payer@demo.ru'}
                   />
                 </label>
                 {role === 'payer' && (
@@ -758,11 +758,11 @@ export function AuthPage({ user, login, registerPayer, onLogout }) {
             {mode !== 'register' && (
               <label className={fieldClass('email')}>
                 Почта
-                <input
-                  value={form.email}
-                  onChange={(event) => update('email', event.target.value)}
-                  placeholder={role === 'companyAdmin' ? 'owner@comfort-dom.ru' : role === 'employee' ? 'employee@demo.ru' : 'payer@demo.ru'}
-                />
+                  <input
+                    value={form.email}
+                    onChange={(event) => update('email', event.target.value)}
+                    placeholder={role === 'companyAdmin' ? 'owner@comfort-dom.ru' : role === 'employee' ? 'dispatcher@demo.ru' : 'payer@demo.ru'}
+                  />
               </label>
             )}
             <label className={fieldClass('password')}>
@@ -783,7 +783,7 @@ export function AuthPage({ user, login, registerPayer, onLogout }) {
                 : role === 'companyAdmin'
                   ? 'Войти как администратор'
                   : role === 'employee'
-                    ? 'Войти как сотрудник'
+                    ? 'Войти как диспетчер/бухгалтер'
                     : 'Войти'}
             </button>
           </form>
@@ -803,7 +803,7 @@ export function AuthPage({ user, login, registerPayer, onLogout }) {
                   Регистрация
                 </button>
                 <button type="button" className="underlined-action" onClick={switchToEmployee}>
-                  войти как сотрудник ЖКУ
+                  войти как диспетчер/бухгалтер
                 </button>
                 <button type="button" className="underlined-action" onClick={switchToCompanyAdmin}>
                   войти как администратор компании
@@ -823,7 +823,7 @@ export function AuthPage({ user, login, registerPayer, onLogout }) {
                   Регистрация
                 </button>
                 <button type="button" className="underlined-action" onClick={switchToPayer}>
-                  войти как гражданин плательщик
+                  войти как плательщик
                 </button>
                 <button type="button" className="underlined-action" onClick={switchToCompanyAdmin}>
                   войти как администратор компании
@@ -835,10 +835,10 @@ export function AuthPage({ user, login, registerPayer, onLogout }) {
                   Регистрация компании
                 </Link>
                 <button type="button" className="underlined-action" onClick={switchToEmployee}>
-                  войти как сотрудник ЖКУ
+                  войти как диспетчер/бухгалтер
                 </button>
                 <button type="button" className="underlined-action" onClick={switchToPayer}>
-                  войти как гражданин плательщик
+                  войти как плательщик
                 </button>
               </>
             )}

@@ -4,7 +4,6 @@ import {
   Droplets,
   Flame,
   Gauge,
-  Home,
   ReceiptText,
   ShieldCheck,
   WalletCards,
@@ -23,8 +22,6 @@ export const serviceIcons = {
   water: Droplets,
   gas: Flame,
   electricity: Zap,
-  heating: Home,
-  maintenance: Building2,
 };
 
 export const employeeRoleOptions = ['Администратор', 'Диспетчер', 'Бухгалтер'];
@@ -94,15 +91,6 @@ export const demoEmployeeAccounts = [
     employeeRole: 'Бухгалтер',
     position: 'Бухгалтер по начислениям',
   },
-  {
-    label: 'Сотрудник',
-    email: 'employee@demo.ru',
-    password: 'demo',
-    loginName: 'employee',
-    name: 'Антон Соколов',
-    employeeRole: 'Диспетчер',
-    position: 'Специалист абонентского отдела',
-  },
 ];
 
 export const demoReceiptSeed = [
@@ -130,8 +118,9 @@ export const demoReceiptSeed = [
   ['2026-04', 'acc-1', 'water', 1580, 'paid'],
   ['2026-04', 'acc-1', 'gas', 980, 'unpaid'],
   ['2026-04', 'acc-2', 'electricity', 2440, 'paid'],
-  ['2026-05', 'acc-1', 'water', 1620, 'unpaid'],
-  ['2026-05', 'acc-1', 'electricity', 2780, 'unpaid'],
+  ['2026-05', 'acc-1', 'water', 4523.67, 'unpaid'],
+  ['2026-05', 'acc-1', 'electricity', 1367.4, 'paid'],
+  ['2026-05', 'acc-1', 'gas', 1190.64, 'paid'],
   ['2026-05', 'acc-2', 'gas', 940, 'paid'],
 ];
 
@@ -160,12 +149,11 @@ export const defaultCompanyProfile = {
     { id: 'staff-1', name: 'Иван Петров', email: 'owner@comfort-dom.ru', phone: '+7 900 555-44-33', role: 'Администратор', status: 'Активен' },
     { id: 'staff-2', name: 'Анна Сергеева', email: 'operator@comfort-dom.ru', phone: '+7 900 222-14-15', role: 'Диспетчер', status: 'Активен' },
     { id: 'staff-3', name: 'Ольга Миронова', email: 'accountant@comfort-dom.ru', phone: '+7 900 777-11-21', role: 'Бухгалтер', status: 'Ожидает приглашение' },
-    { id: 'staff-4', name: 'Павел Кузнецов', email: 'master@comfort-dom.ru', phone: '+7 900 333-44-55', role: 'Диспетчер', status: 'Активен' },
   ],
   requests: [
-    { id: 'req-1', topic: 'Протечка в подъезде', house: 'ул. Светлая, 18', status: 'В работе', assignee: 'Павел Кузнецов' },
-    { id: 'req-2', topic: 'Перерасчет начисления', house: 'ул. Центральная, 10', status: 'Новая', assignee: 'Не назначен' },
-    { id: 'req-3', topic: 'Проверка счетчика воды', house: 'ул. Озерная, 6', status: 'Закрыта', assignee: 'Анна Сергеева' },
+    { id: 'req-1', topic: 'Протечка в подъезде', house: 'ул. Светлая, 18', status: 'В работе', assignee: 'Анна Сергеева' },
+    { id: 'req-2', topic: 'Перерасчет начисления', house: 'ул. Центральная, 10', status: 'Новое', assignee: 'Не назначен' },
+    { id: 'req-3', topic: 'Проверка счетчика воды', house: 'ул. Озерная, 6', status: 'Выполнено', assignee: 'Анна Сергеева' },
   ],
   registryEvents: [
     'Обновлены сведения о домах из реестра',
@@ -176,7 +164,7 @@ export const defaultCompanyProfile = {
 
 export const audienceContent = {
   citizen: {
-    eyebrow: 'Для гражданина',
+    eyebrow: 'Для плательщика',
     title: 'Все платежи ЖКУ рядом, без бумажной путаницы',
     text: 'Плательщик видит квитанции по периодам, быстро проверяет долги и имитирует оплату через понятные способы.',
     action: 'Войти',
@@ -190,7 +178,7 @@ export const audienceContent = {
       {
         icon: ReceiptText,
         title: 'Квитанции по услугам',
-        text: 'Вода, газ, электричество и содержание жилья собраны в одном личном кабинете.',
+        text: 'Водоснабжение, электроснабжение и газоснабжение собраны в одном личном кабинете.',
       },
       {
         icon: WalletCards,
@@ -200,9 +188,9 @@ export const audienceContent = {
     ],
   },
   employee: {
-    eyebrow: 'Для сотрудников ЖКУ',
-    title: 'Быстрая картина по оплатам и задолженностям',
-    text: 'Сотрудник видит базовую статистику по оплаченным и неоплаченным квитанциям без ручного подсчета.',
+    eyebrow: 'Для диспетчера и бухгалтера',
+    title: 'Рабочие кабинеты компании',
+    text: 'Диспетчер работает с заявками пользователей, а бухгалтер видит документы, выгрузки, выручку и задолженности.',
     action: 'Войти',
     href: '/auth?role=employee',
     cards: [
@@ -247,7 +235,7 @@ export const faqByAudience = {
     },
     {
       question: 'Какие роли сотрудников предусмотрены?',
-      answer: 'Первый зарегистрировавший компанию пользователь становится администратором. Остальных сотрудников и их права компания сможет настроить позже в личном кабинете.',
+      answer: 'В кабинете компании доступны три роли: администратор компании, диспетчер и бухгалтер.',
     },
     {
       question: 'Можно ли приглашать сотрудников по почте?',
